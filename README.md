@@ -54,6 +54,10 @@ managed Postgres; nothing else changes.
 | `npm run db:diff` | Regenerate migration SQL after editing `schema.prisma` |
 | `npm run db:studio` | Browse the data in Prisma Studio |
 
+> **New here, or picking this up again?** Read
+> **[NEXT-STEPS.md](NEXT-STEPS.md)** first — it covers what is done, what is
+> still a placeholder, and what to do in what order.
+
 ## Working on another machine
 
 Everything runs on macOS and Linux as well as Windows — the local database is
