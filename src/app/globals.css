@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-canvas: #faf9f7;
+  --color-surface: #ffffff;
+  --color-ink: #1c1917;
+  --color-muted: #78716c;
+  --color-line: #e7e5e4;
+  --color-subtle: #f5f4f2;
+  --color-accent: #d94f0b;
+  --color-accent-soft: #fdf0e7;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+/* Keep focus rings visible for keyboard users without boxing every click. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Save-as-PDF from the browser is how invoices become files, so the chrome
+   around the document must not print. */
+@media print {
+  body {
+    background: #fff;
+  }
+  header,
+  footer.site-footer,
+  nav {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  @page {
+    margin: 16mm;
+  }
+}

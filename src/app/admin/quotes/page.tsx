@@ -1,0 +1,261 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { formatMoney } from "@/lib/money";
+
+type QuoteRow = {
+  id: string;
+  reference: string;
+  title: string;
+  status: "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+  currency: string;
+  totalCents: number;
+  validUntil: string | null;
+  createdAt: string;
+  client: { name: string; email: string };
+  _count: { lines: number };
+};
+
+const STATUS_LABELS: Record<QuoteRow["status"], string> = {
+  DRAFT: "Draft",
+  SENT: "Awaiting decision",
+  ACCEPTED: "Accepted",
+  REJECTED: "Declined",
+  EXPIRED: "Expired",
+};
+
+const STATUS_STYLES: Record<QuoteRow["status"], string> = {
+  DRAFT: "bg-subtle text-muted",
+  SENT: "bg-accent-soft text-accent",
+  ACCEPTED: "bg-ink text-white",
+  REJECTED: "bg-subtle text-muted",
+  EXPIRED: "bg-subtle text-muted",
+};
+
+const FILTERS = ["ALL", "DRAFT", "SENT", "ACCEPTED", "REJECTED"] as const;
+
+export default function QuotesPage() {
+  const [quotes, setQuotes] = useState<QuoteRow[] | null>(null);
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [lastLink, setLastLink] = useState<{ id: string; link: string } | null>(
+    null,
+  );
+
+  const load = useCallback(async (status: (typeof FILTERS)[number]) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const query = status === "ALL" ? "" : `?status=${status}`;
+      const response = await fetch(`/api/admin/quotes${query}`);
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Could not load quotes.");
+        setQuotes(null);
+        return;
+      }
+      setQuotes(data.quotes as QuoteRow[]);
+    } catch {
+      setError("Couldn't reach the server.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Deferred out of the effect body so the fetch's state updates land in a
+    // later task rather than cascading through this render.
+    queueMicrotask(() => void load(filter));
+  }, [filter, load]);
+
+  async function send(id: string) {
+    setSendingId(id);
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/quotes/${id}/send`, {
+        method: "POST",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Could not send.");
+        return;
+      }
+      // Surfaced so staff can copy the link while email is unconfigured.
+      setLastLink({ id, link: data.link });
+      if (!data.emailSent) {
+        setError(
+          `Quote marked as sent, but the email did not go out (${data.emailError}). Copy the link below and send it yourself.`,
+        );
+      }
+      await load(filter);
+    } catch {
+      setError("Couldn't reach the server.");
+    } finally {
+      setSendingId(null);
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-5xl px-5 py-12">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">Offertes</h1>
+          <p className="mt-1.5 text-sm text-muted">
+            Quotes you have raised, and where each one stands.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link
+            href="/admin"
+            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
+          >
+            Requests
+          </Link>
+          <Link
+            href="/admin/invoices"
+            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
+          >
+            Facturen
+          </Link>
+          <Link
+            href="/admin/tickets"
+            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
+          >
+            Tickets
+          </Link>
+          <Link
+            href="/admin/quotes/new"
+            className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
+          >
+            New quote
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-1.5">
+        {FILTERS.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => setFilter(option)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              filter === option
+                ? "bg-ink text-white"
+                : "border border-line text-muted hover:bg-subtle hover:text-ink"
+            }`}
+          >
+            {option === "ALL" ? "All" : STATUS_LABELS[option]}
+          </button>
+        ))}
+      </div>
+
+      {error && (
+        <p className="mt-4 rounded-lg bg-accent-soft px-3.5 py-2.5 text-sm text-accent">
+          {error}
+        </p>
+      )}
+
+      {loading && !quotes && (
+        <p className="mt-8 text-sm text-muted">Loading...</p>
+      )}
+
+      {quotes && quotes.length === 0 && (
+        <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
+          <p className="font-medium">No quotes here yet.</p>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
+            Raise one with the New quote button — the client gets a link they
+            can accept or decline without needing an account.
+          </p>
+        </div>
+      )}
+
+      {quotes && quotes.length > 0 && (
+        <ul className="mt-6 space-y-3">
+          {quotes.map((quote) => (
+            <li
+              key={quote.id}
+              className="rounded-xl border border-line bg-surface p-5"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-semibold tracking-tight">
+                      {quote.title}
+                    </h2>
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLES[quote.status]}`}
+                    >
+                      {STATUS_LABELS[quote.status]}
+                    </span>
+                  </div>
+                  <p className="mt-1 font-mono text-xs text-muted">
+                    {quote.reference}
+                  </p>
+                  <p className="mt-2 text-sm">
+                    {quote.client.name}
+                    <span className="text-muted"> · {quote.client.email}</span>
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                  <span className="font-semibold tabular-nums">
+                    {formatMoney(quote.totalCents, quote.currency)}
+                  </span>
+                  {quote.status === "DRAFT" && (
+                    <button
+                      type="button"
+                      disabled={sendingId === quote.id}
+                      onClick={() => void send(quote.id)}
+                      className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
+                    >
+                      {sendingId === quote.id ? "Sending..." : "Send to client"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {lastLink?.id === quote.id && (
+                <div className="mt-3 rounded-lg bg-subtle px-3 py-2">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
+                    Client link
+                  </p>
+                  <p className="mt-1 break-all font-mono text-xs">
+                    {lastLink.link}
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
+                <span>
+                  {quote._count.lines} line
+                  {quote._count.lines === 1 ? "" : "s"}
+                </span>
+                <span>
+                  Raised{" "}
+                  {new Date(quote.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                {quote.validUntil && (
+                  <span>
+                    Valid until{" "}
+                    {new Date(quote.validUntil).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
