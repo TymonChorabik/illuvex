@@ -35,8 +35,11 @@ export async function POST(request: Request) {
   const phone = clean(payload.phone, 40);
   const notes = clean(payload.notes, 2000);
 
-  const offer = getOffer(offerId);
-  if (!offer) {
+  // No offerId means a custom quote request — no site package to browse, so
+  // this is how a visitor asks for one instead of picking from a catalogue.
+  const isCustom = offerId.length === 0;
+  const offer = isCustom ? null : getOffer(offerId);
+  if (!isCustom && !offer) {
     return NextResponse.json(
       { error: "That package no longer exists." },
       { status: 400 },
@@ -51,13 +54,22 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  if (isCustom && notes.length < 5) {
+    return NextResponse.json(
+      { error: "Tell us a bit about what you need." },
+      { status: 400 },
+    );
+  }
 
   // Price comes from the server-side catalog, never from the request body.
+  // A custom request has no catalogue entry, so it is priced 0 (shown as
+  // "Custom quote" everywhere a price is displayed) until staff raise a real
+  // offerte for it.
   const order = await createOrder({
-    packageSlug: offer.id,
-    offerName: offer.name,
-    price: offer.price,
-    priceUnit: offer.priceUnit,
+    packageSlug: offer ? offer.id : "custom",
+    offerName: offer ? offer.name : "Custom quote request",
+    price: offer ? offer.price : 0,
+    priceUnit: offer?.priceUnit,
     name,
     email,
     company: company || undefined,

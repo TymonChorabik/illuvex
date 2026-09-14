@@ -12,7 +12,7 @@ export const SITE = {
   referencePrefix: "ILV",
   tagline: "Websites that earn their keep",
   blurb:
-    "We design and build websites for small businesses — fast, mobile-first, and built to convert. Pick a package below and we'll email you a confirmation straight away.",
+    "We design and build websites for small businesses — fast, mobile-first, and built to convert. Tell us what you need and we'll reply with a real quote.",
   // Shown next to every price. Change to "£", "€", "zł", etc.
   currency: "$",
 
@@ -36,6 +36,9 @@ export const SITE = {
 export const STORAGE_KEY = "illuvex:email";
 
 export function formatPrice(amount: number, unit?: string) {
+  // A zero price marks a custom quote request with no catalogue price yet —
+  // "$0" would read as free, so say what it actually is instead.
+  if (amount === 0) return "Custom quote";
   const value = `${SITE.currency}${amount.toLocaleString("en-US")}`;
   return unit ? `${value}${unit}` : value;
 }

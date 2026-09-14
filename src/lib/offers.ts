@@ -264,6 +264,32 @@ export function filterOffers(offers: Offer[], filters: FilterState) {
   });
 }
 
+/** Turns picked filters into a readable summary to pre-fill a quote request. */
+export function describeFilters(filters: FilterState): string {
+  const parts: string[] = [];
+  if (filters.categories.length) {
+    parts.push(
+      `Looking for: ${filters.categories.map((c) => CATEGORY_LABELS[c]).join(", ")}`,
+    );
+  }
+  if (filters.budgets.length) {
+    parts.push(
+      `Budget: ${filters.budgets.map((b) => BUDGET_LABELS[b]).join(", ")}`,
+    );
+  }
+  if (filters.timelines.length) {
+    parts.push(
+      `Timeline: ${filters.timelines.map((t) => TIMELINE_LABELS[t]).join(", ")}`,
+    );
+  }
+  if (filters.features.length) {
+    parts.push(
+      `Also want: ${filters.features.map((f) => FEATURE_LABELS[f]).join(", ")}`,
+    );
+  }
+  return parts.join("\n");
+}
+
 export function countActiveFilters(filters: FilterState) {
   return (
     filters.categories.length +

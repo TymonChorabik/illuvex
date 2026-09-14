@@ -14,7 +14,6 @@ type Props = {
   onChange: (next: FilterState) => void;
   onReset: () => void;
   activeCount: number;
-  resultCount: number;
 };
 
 function Checkbox({
@@ -77,7 +76,6 @@ export function FilterPanel({
   onChange,
   onReset,
   activeCount,
-  resultCount,
 }: Props) {
   function toggle<K extends keyof FilterState>(
     key: K,
@@ -162,10 +160,6 @@ export function FilterPanel({
           />
         ))}
       </Group>
-
-      <p className="px-5 py-3.5 text-xs text-muted">
-        Showing {resultCount} of 8 packages
-      </p>
     </aside>
   );
 }

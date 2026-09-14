@@ -2,24 +2,21 @@
 
 import { useMemo, useState } from "react";
 import { FilterPanel } from "@/components/filter-panel";
-import { OfferCard } from "@/components/offer-card";
 import { RequestModal } from "@/components/request-modal";
 import {
   countActiveFilters,
+  describeFilters,
   EMPTY_FILTERS,
-  filterOffers,
-  OFFERS,
   type FilterState,
-  type Offer,
 } from "@/lib/offers";
 import { SITE } from "@/lib/site";
 
 export default function Page() {
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
-  const [selected, setSelected] = useState<Offer | null>(null);
+  const [requesting, setRequesting] = useState(false);
 
-  const results = useMemo(() => filterOffers(OFFERS, filters), [filters]);
   const activeCount = countActiveFilters(filters);
+  const summary = useMemo(() => describeFilters(filters), [filters]);
 
   return (
     <>
@@ -42,43 +39,37 @@ export default function Page() {
               onChange={setFilters}
               onReset={() => setFilters(EMPTY_FILTERS)}
               activeCount={activeCount}
-              resultCount={results.length}
             />
           </div>
 
-          <div>
-            {results.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-                <p className="font-medium">Nothing matches all of those.</p>
-                <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-                  Loosen a filter, or ask the assistant in the corner — we build
-                  custom quotes too.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setFilters(EMPTY_FILTERS)}
-                  className="mt-5 rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-                >
-                  Clear filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {results.map((offer) => (
-                  <OfferCard
-                    key={offer.id}
-                    offer={offer}
-                    onRequest={setSelected}
-                  />
-                ))}
-              </div>
-            )}
+          <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
+            <p className="font-medium">
+              {activeCount > 0
+                ? "Good — that narrows it down."
+                : "Every project is quoted for what it actually needs."}
+            </p>
+            <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
+              {activeCount > 0
+                ? "Send us what you picked and we'll reply with a real price, not a guess."
+                : "Pick what applies on the left, or just tell us what you're after."}
+            </p>
+            <button
+              type="button"
+              onClick={() => setRequesting(true)}
+              className="mt-5 rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
+            >
+              Get a custom quote
+            </button>
           </div>
         </div>
       </div>
 
-      {selected && (
-        <RequestModal offer={selected} onClose={() => setSelected(null)} />
+      {requesting && (
+        <RequestModal
+          offer={null}
+          prefillNotes={summary}
+          onClose={() => setRequesting(false)}
+        />
       )}
     </>
   );

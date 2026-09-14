@@ -13,9 +13,13 @@ type Submitted = {
 
 export function RequestModal({
   offer,
+  prefillNotes,
   onClose,
 }: {
-  offer: Offer;
+  /** null means a custom quote request — no fixed package attached. */
+  offer: Offer | null;
+  /** Pre-fills the notes field, e.g. with a summary of picked filters. */
+  prefillNotes?: string;
   onClose: () => void;
 }) {
   const [pending, setPending] = useState(false);
@@ -47,7 +51,7 @@ export function RequestModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          offerId: offer.id,
+          offerId: offer?.id ?? "",
           name: form.get("name"),
           email: form.get("email"),
           company: form.get("company"),
@@ -160,17 +164,18 @@ export function RequestModal({
             <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-muted">
-                  Requesting
+                  {offer ? "Requesting" : "Custom quote"}
                 </p>
                 <h2
                   id="request-title"
                   className="mt-1 text-lg font-semibold tracking-tight"
                 >
-                  {offer.name}
+                  {offer ? offer.name : "Tell us what you need"}
                 </h2>
                 <p className="mt-0.5 text-sm text-muted">
-                  {formatPrice(offer.price, offer.priceUnit)} ·{" "}
-                  {offer.timelineLabel}
+                  {offer
+                    ? `${formatPrice(offer.price, offer.priceUnit)} · ${offer.timelineLabel}`
+                    : "We'll reply with a price once we know a bit more."}
                 </p>
               </div>
               <button
@@ -254,15 +259,22 @@ export function RequestModal({
 
               <div>
                 <label className={labelClass} htmlFor="notes">
-                  Anything we should know?
+                  {offer ? "Anything we should know?" : "What do you need? *"}
                 </label>
                 <textarea
                   id="notes"
                   name="notes"
-                  rows={3}
+                  rows={offer ? 3 : 4}
+                  required={!offer}
+                  minLength={offer ? undefined : 5}
                   maxLength={2000}
+                  defaultValue={prefillNotes}
                   className={`${field} resize-none`}
-                  placeholder="Deadlines, pages you need, a site you like the look of..."
+                  placeholder={
+                    offer
+                      ? "Deadlines, pages you need, a site you like the look of..."
+                      : "What are you trying to build, and what's your rough budget or timeline?"
+                  }
                 />
               </div>
 
