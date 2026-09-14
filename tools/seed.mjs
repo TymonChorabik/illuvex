@@ -88,7 +88,7 @@ if (existing.rows.length) {
   console.log(`admin ${ADMIN_EMAIL} already exists — not touching the password`);
 } else {
   const password =
-    process.env.SEED_ADMIN_PASSWORD ?? crypto.randomBytes(12).toString("base64url");
+    process.env.SEED_ADMIN_PASSWORD?.trim() || crypto.randomBytes(12).toString("base64url");
   await client.query(
     `INSERT INTO users (id, "tenantId", email, "passwordHash", name, role,
                         "emailVerifiedAt", "failedAttempts", "createdAt", "updatedAt")
