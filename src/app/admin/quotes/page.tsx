@@ -41,9 +41,11 @@ export default function QuotesPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [invoicingId, setInvoicingId] = useState<string | null>(null);
   const [lastLink, setLastLink] = useState<{ id: string; link: string } | null>(
     null,
   );
+  const [invoicedIds, setInvoicedIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async (status: (typeof FILTERS)[number]) => {
     setLoading(true);
@@ -95,6 +97,28 @@ export default function QuotesPage() {
       setError("Couldn't reach the server.");
     } finally {
       setSendingId(null);
+    }
+  }
+
+  async function invoice(id: string) {
+    setInvoicingId(id);
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/invoices`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quoteId: id }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Could not create the invoice.");
+        return;
+      }
+      setInvoicedIds((prev) => new Set(prev).add(id));
+    } catch {
+      setError("Couldn't reach the server.");
+    } finally {
+      setInvoicingId(null);
     }
   }
 
@@ -214,6 +238,26 @@ export default function QuotesPage() {
                       {sendingId === quote.id ? "Sending..." : "Send to client"}
                     </button>
                   )}
+                  {quote.status === "ACCEPTED" &&
+                    (invoicedIds.has(quote.id) ? (
+                      <Link
+                        href="/admin/invoices"
+                        className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
+                      >
+                        View invoice
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={invoicingId === quote.id}
+                        onClick={() => void invoice(quote.id)}
+                        className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
+                      >
+                        {invoicingId === quote.id
+                          ? "Creating..."
+                          : "Create invoice"}
+                      </button>
+                    ))}
                 </div>
               </div>
 
