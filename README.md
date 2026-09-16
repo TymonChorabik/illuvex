@@ -1,4 +1,4 @@
-# Illuvex
+# Illudesk
 
 A booking-and-enquiry app for a web design business. Visitors browse service
 packages, narrow them with filters, request one, and get an emailed
@@ -119,7 +119,7 @@ Almost everything you'll want to change lives in two files.
 **`src/lib/site.ts`** — business name, tagline, intro text, currency symbol,
 order-reference prefix, and the contact details.
 
-> Every contact detail shipped here is a **placeholder**: `hello@illuvex.example`,
+> Every contact detail shipped here is a **placeholder**: `hello@illudesk.example`,
 > `+00 0000 000000`, `City, Country`. The `.example` domain is reserved and can
 > never be registered, so nothing can accidentally reach a real inbox. Replace
 > them all before launch.

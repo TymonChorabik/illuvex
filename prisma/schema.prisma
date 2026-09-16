@@ -1,7 +1,7 @@
-// Illuvex data model.
+// Illudesk data model.
 //
 // TENANCY: every business-owned row carries `tenantId`. Today the app runs a
-// single tenant (Illuvex itself), but scoping queries by tenant from day one
+// single tenant (Illudesk itself), but scoping queries by tenant from day one
 // is what makes reselling a switch to flip rather than a rebuild. Never write
 // a query against these tables without a tenant filter.
 
@@ -17,7 +17,7 @@ datasource db {
 /// A business using the system. One row today; many if the system is resold.
 model Tenant {
   id        String   @id @default(cuid())
-  /// URL-safe key, e.g. "illuvex". Used for subdomain or path routing later.
+  /// URL-safe key, e.g. "illudesk". Used for subdomain or path routing later.
   slug      String   @unique
   name      String
   /// Branding + contact overrides. Mirrors src/lib/site.ts.
@@ -37,9 +37,9 @@ model Tenant {
 }
 
 enum UserRole {
-  /// Illuvex staff: sees everything for their tenant.
+  /// Illudesk staff: sees everything for their tenant.
   ADMIN
-  /// Illuvex staff with limited rights.
+  /// Illudesk staff with limited rights.
   STAFF
   /// A customer of the tenant: sees only their own client record.
   CUSTOMER

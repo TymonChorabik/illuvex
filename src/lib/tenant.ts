@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
  * or path instead — and every caller keeps working, because they already scope
  * their queries by the id this returns.
  */
-const DEFAULT_SLUG = process.env.TENANT_SLUG ?? "illuvex";
+const DEFAULT_SLUG = process.env.TENANT_SLUG ?? "illudesk";
 
 let cached: { id: string; slug: string } | null = null;
 

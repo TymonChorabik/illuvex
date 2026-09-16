@@ -71,7 +71,7 @@ export async function GET(request: Request) {
     );
 
     return csvResponse(
-      `illuvex-invoice-lines${year ? `-${year}` : ""}.csv`,
+      `illudesk-invoice-lines${year ? `-${year}` : ""}.csv`,
       toCsv(
         ["invoice_number","issue_date","client","client_vat_number","description",
          "quantity","unit_price","vat_rate","net","vat","gross","currency"],
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
   ]);
 
   return csvResponse(
-    `illuvex-invoices${year ? `-${year}` : ""}.csv`,
+    `illudesk-invoices${year ? `-${year}` : ""}.csv`,
     toCsv(
       ["invoice_number","issue_date","due_date","client","client_vat_number","status",
        "net","vat","gross","paid","outstanding","paid_date","currency"],

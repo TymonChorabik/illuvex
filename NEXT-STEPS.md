@@ -42,7 +42,7 @@ it is a short change either way.
 - **Packages and prices** in `src/lib/offers.ts` are invented. Replace them
   with your real services, or delete them if the answer above is option 2.
 - **Contact details** in `src/lib/site.ts` are deliberately fake
-  (`hello@illuvex.example`, `+00 0000 000000`, `City, Country`). The
+  (`hello@illudesk.example`, `+00 0000 000000`, `City, Country`). The
   `.example` domain can never be registered, so nothing can accidentally
   reach a real inbox.
 - **The logo** in `src/components/logo.tsx` is a placeholder geometric mark.

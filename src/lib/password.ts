@@ -104,7 +104,7 @@ export function checkPasswordStrength(password: string): PasswordProblem {
     return "Password must be under 200 characters.";
   }
   const lowered = password.toLowerCase();
-  const banned = ["password", "illuvex", "12345678", "qwerty", "letmein"];
+  const banned = ["password", "illudesk", "12345678", "qwerty", "letmein"];
   if (banned.some((word) => lowered.includes(word))) {
     return "That password is too easy to guess. Pick something less predictable.";
   }

@@ -34,8 +34,8 @@ async function hashPassword(password) {
   return ["scrypt", N, R, P, salt.toString("base64"), derived.toString("base64")].join("$");
 }
 
-const TENANT_SLUG = "illuvex";
-const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@illuvex.example";
+const TENANT_SLUG = "illudesk";
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@illudesk.example";
 
 const PACKAGES = [
   ["landing-page", "Landing Page", "One high-converting page to launch a product, run ads against, or replace a dead social bio link.", 39900, null, "website", "5–7 days",
@@ -73,7 +73,7 @@ if (rows.length) {
   await client.query(
     `INSERT INTO tenants (id, slug, name, settings, "createdAt", "updatedAt")
      VALUES ($1,$2,$3,$4,$5,$5)`,
-    [tenantId, TENANT_SLUG, "Illuvex", JSON.stringify({}), now],
+    [tenantId, TENANT_SLUG, "Illudesk", JSON.stringify({}), now],
   );
   console.log(`created tenant "${TENANT_SLUG}"`);
 }
@@ -93,7 +93,7 @@ if (existing.rows.length) {
     `INSERT INTO users (id, "tenantId", email, "passwordHash", name, role,
                         "emailVerifiedAt", "failedAttempts", "createdAt", "updatedAt")
      VALUES ($1,$2,$3,$4,$5,'ADMIN',$6,0,$6,$6)`,
-    [cuid(), tenantId, ADMIN_EMAIL, await hashPassword(password), "Illuvex Admin", now],
+    [cuid(), tenantId, ADMIN_EMAIL, await hashPassword(password), "Illudesk Admin", now],
   );
   console.log(`\ncreated admin account`);
   console.log(`  email:    ${ADMIN_EMAIL}`);

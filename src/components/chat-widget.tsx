@@ -15,7 +15,7 @@ const SUGGESTIONS = [
 ];
 
 /** Anything on the page can open the chat by firing this. */
-export const OPEN_CHAT_EVENT = "illuvex:open-chat";
+export const OPEN_CHAT_EVENT = "illudesk:open-chat";
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false);

@@ -146,7 +146,7 @@ export default function AdminPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@illuvex.example"
+            placeholder="you@illudesk.example"
             autoComplete="username"
             className="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
           />

@@ -12,7 +12,7 @@ import type { UserRole } from "@/generated/prisma/client";
  * "revoke everywhere" genuinely invalidate access rather than waiting for a
  * JWT to expire.
  */
-const COOKIE = "illuvex_session";
+const COOKIE = "illudesk_session";
 const SESSION_DAYS = 7;
 const MAX_FAILED_ATTEMPTS = 8;
 const LOCKOUT_MINUTES = 15;
