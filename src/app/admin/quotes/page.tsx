@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AdminNav } from "@/components/admin-nav";
 import { formatMoney } from "@/lib/money";
 
 type QuoteRow = {
@@ -36,6 +38,7 @@ const STATUS_STYLES: Record<QuoteRow["status"], string> = {
 const FILTERS = ["ALL", "DRAFT", "SENT", "ACCEPTED", "REJECTED"] as const;
 
 export default function QuotesPage() {
+  const router = useRouter();
   const [quotes, setQuotes] = useState<QuoteRow[] | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
   const [loading, setLoading] = useState(false);
@@ -55,6 +58,12 @@ export default function QuotesPage() {
       const response = await fetch(`/api/admin/quotes${query}`);
       const data = await response.json();
       if (!response.ok) {
+        // Landed here signed out (e.g. a direct link) -- send to the page
+        // with the actual sign-in form instead of stranding on an error.
+        if (response.status === 401) {
+          router.push("/admin");
+          return;
+        }
         setError(data.error ?? "Could not load quotes.");
         setQuotes(null);
         return;
@@ -65,7 +74,7 @@ export default function QuotesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     // Deferred out of the effect body so the fetch's state updates land in a
@@ -124,7 +133,8 @@ export default function QuotesPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <AdminNav />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Offertes</h1>
           <p className="mt-1.5 text-sm text-muted">
@@ -132,24 +142,6 @@ export default function QuotesPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link
-            href="/admin"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Requests
-          </Link>
-          <Link
-            href="/admin/invoices"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Facturen
-          </Link>
-          <Link
-            href="/admin/tickets"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Tickets
-          </Link>
           <Link
             href="/admin/quotes/new"
             className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AdminNav } from "@/components/admin-nav";
 import { formatMoney } from "@/lib/money";
 
 type InvoiceRow = {
@@ -47,6 +49,7 @@ const STATUS_STYLES: Record<InvoiceRow["status"], string> = {
 const FILTERS = ["ALL", "DRAFT", "SENT", "OVERDUE", "PAID"] as const;
 
 export default function InvoicesPage() {
+  const router = useRouter();
   const [invoices, setInvoices] = useState<InvoiceRow[] | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
@@ -66,6 +69,10 @@ export default function InvoicesPage() {
         const response = await fetch(`/api/admin/invoices?${query}`);
         const data = await response.json();
         if (!response.ok) {
+          if (response.status === 401) {
+            router.push("/admin");
+            return;
+          }
           setError(data.error ?? "Could not load invoices.");
           return;
         }
@@ -77,7 +84,7 @@ export default function InvoicesPage() {
         setLoading(false);
       }
     },
-    [],
+    [router],
   );
 
   useEffect(() => {
@@ -119,7 +126,8 @@ export default function InvoicesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <AdminNav />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Facturen</h1>
           <p className="mt-1.5 text-sm text-muted">
@@ -127,12 +135,6 @@ export default function InvoicesPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/admin/quotes" className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle">
-            Offertes
-          </Link>
-          <Link href="/admin/tickets" className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle">
-            Tickets
-          </Link>
           <a
             href={`/api/admin/invoices/export?format=invoices&year=${year}`}
             className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"

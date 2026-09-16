@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AdminNav } from "@/components/admin-nav";
 
 type Client = {
   id: string;
@@ -14,6 +15,7 @@ type Client = {
 };
 
 export default function ClientsPage() {
+  const router = useRouter();
   const [clients, setClients] = useState<Client[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +31,10 @@ export default function ClientsPage() {
       const response = await fetch("/api/admin/clients");
       const data = await response.json();
       if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/admin");
+          return;
+        }
         setError(data.error ?? "Could not load clients.");
         return;
       }
@@ -38,7 +44,7 @@ export default function ClientsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     queueMicrotask(() => void load());
@@ -72,27 +78,14 @@ export default function ClientsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <AdminNav />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Clients</h1>
           <p className="mt-1.5 text-sm text-muted">
             Invite a client and they can sign in to raise tickets and see their
             quotes.
           </p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/admin/tickets"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Tickets
-          </Link>
-          <Link
-            href="/admin/quotes"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Offertes
-          </Link>
         </div>
       </div>
 

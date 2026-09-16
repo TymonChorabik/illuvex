@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { AdminNav } from "@/components/admin-nav";
 import type { Order } from "@/lib/db";
 import {
   ORDER_STATUSES,
@@ -69,13 +69,6 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function signOut() {
-    await fetch("/api/admin/session", { method: "DELETE" });
-    setAuthed(false);
-    setOrders([]);
-    setUser(null);
   }
 
   async function changeStatus(id: string, status: OrderStatus) {
@@ -187,7 +180,8 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <AdminNav />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Requests</h1>
           <p className="mt-1.5 text-sm text-muted">
@@ -197,30 +191,6 @@ export default function AdminPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link
-            href="/admin/tickets"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Tickets
-          </Link>
-          <Link
-            href="/admin/clients"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Clients
-          </Link>
-          <Link
-            href="/admin/invoices"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Facturen
-          </Link>
-          <Link
-            href="/admin/quotes"
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
-          >
-            Offertes
-          </Link>
           <button
             type="button"
             onClick={() => void load()}
@@ -228,13 +198,6 @@ export default function AdminPage() {
             className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle disabled:opacity-55"
           >
             {loading ? "Refreshing..." : "Refresh"}
-          </button>
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-subtle hover:text-ink"
-          >
-            Sign out
           </button>
         </div>
       </div>

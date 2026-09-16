@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AdminNav } from "@/components/admin-nav";
 import {
   documentTotals,
   formatMoney,
@@ -122,7 +123,8 @@ export default function NewQuotePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <div className="flex items-center justify-between gap-4">
+      <AdminNav />
+      <div className="mt-6 flex items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">New quote</h1>
         <Link
           href="/admin/quotes"
