@@ -10,7 +10,7 @@ const MAX_LINES = 100;
 const MAX_QUANTITY = 100_000;
 // A single line above 10 million euro is far more likely a typo than a sale.
 const MAX_UNIT_PRICE_CENTS = 1_000_000_000;
-const ALLOWED_VAT_BPS = [0, 900, 2100];
+const ALLOWED_VAT_BPS = [0, 2100];
 
 export type ParsedQuote =
   | {

@@ -8,7 +8,7 @@ import type { InvoiceLineInput } from "@/lib/invoices";
 const MAX_LINES = 200;
 const MAX_QUANTITY = 100_000;
 const MAX_UNIT_PRICE_CENTS = 1_000_000_000;
-const ALLOWED_VAT_BPS = [0, 900, 2100];
+const ALLOWED_VAT_BPS = [0, 2100];
 
 export type ParsedLines =
   | { ok: true; lines: InvoiceLineInput[] }

@@ -18,7 +18,7 @@ type DraftLine = {
   vatRateBps: number;
 };
 
-const VAT_OPTIONS = [2100, 900, 0];
+const VAT_OPTIONS = [2100, 0];
 const BLANK_LINE: DraftLine = {
   description: "",
   quantity: "1",
