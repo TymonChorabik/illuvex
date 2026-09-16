@@ -1,40 +1,50 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { SITE } from "@/lib/site";
-import {
-  STATUS_LABELS,
-  STATUS_STYLES,
-  type TicketStatusName,
-  type TicketPriorityName,
-} from "@/lib/ticket-display";
+import { formatMoney } from "@/lib/money";
 
-type Ticket = {
+type Invoice = {
   id: string;
-  reference: string;
-  subject: string;
-  status: TicketStatusName;
-  priority: TicketPriorityName;
-  createdAt: string;
-  updatedAt: string;
-  _count: { messages: number };
+  number: string | null;
+  status: "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
+  currency: string;
+  totalCents: number;
+  paidCents: number;
+  issuedAt: string | null;
+  dueAt: string | null;
+};
+
+const STATUS_LABELS: Record<Invoice["status"], string> = {
+  DRAFT: "Draft",
+  SENT: "Awaiting payment",
+  PAID: "Paid",
+  OVERDUE: "Overdue",
+  CANCELLED: "Cancelled",
+};
+
+const STATUS_STYLES: Record<Invoice["status"], string> = {
+  DRAFT: "bg-subtle text-muted",
+  SENT: "bg-accent-soft text-accent",
+  PAID: "bg-ink text-white",
+  OVERDUE: "bg-accent text-white",
+  CANCELLED: "bg-subtle text-muted",
 };
 
 export default function PortalPage() {
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [checking, setChecking] = useState(true);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadTickets = useCallback(async () => {
-    const response = await fetch("/api/portal/tickets");
+  const loadInvoices = useCallback(async () => {
+    const response = await fetch("/api/portal/invoices");
     if (!response.ok) return;
     const data = await response.json();
-    setTickets(data.tickets as Ticket[]);
+    setInvoices(data.invoices as Invoice[]);
   }, []);
 
   useEffect(() => {
@@ -45,7 +55,7 @@ export default function PortalPage() {
         if (cancelled) return;
         if (data.authenticated) {
           setUser(data.user);
-          void loadTickets();
+          void loadInvoices();
         }
       })
       .catch(() => {})
@@ -55,7 +65,7 @@ export default function PortalPage() {
     return () => {
       cancelled = true;
     };
-  }, [loadTickets]);
+  }, [loadInvoices]);
 
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,7 +84,7 @@ export default function PortalPage() {
       }
       setUser(data.user);
       setPassword("");
-      await loadTickets();
+      await loadInvoices();
     } catch {
       setError("Couldn't reach the server.");
     } finally {
@@ -85,7 +95,7 @@ export default function PortalPage() {
   async function signOut() {
     await fetch("/api/portal/session", { method: "DELETE" });
     setUser(null);
-    setTickets([]);
+    setInvoices([]);
   }
 
   if (checking) {
@@ -101,7 +111,7 @@ export default function PortalPage() {
       <div className="mx-auto max-w-sm px-5 py-20">
         <h1 className="text-2xl font-semibold tracking-tight">Client portal</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          Sign in to see your projects and raise a support ticket.
+          Sign in to see your invoices.
         </p>
         <form onSubmit={signIn} className="mt-6 space-y-3">
           <input
@@ -149,7 +159,9 @@ export default function PortalPage() {
     );
   }
 
-  const needsReply = tickets.filter((t) => t.status === "WAITING_ON_CUSTOMER").length;
+  const outstanding = invoices.filter(
+    (i) => i.status === "SENT" || i.status === "OVERDUE",
+  ).length;
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
@@ -159,69 +171,81 @@ export default function PortalPage() {
             Hello, {user.name}
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            {tickets.length} ticket{tickets.length === 1 ? "" : "s"}
-            {needsReply > 0 && ` · ${needsReply} waiting on you`}
+            {invoices.length} invoice{invoices.length === 1 ? "" : "s"}
+            {outstanding > 0 && ` · ${outstanding} awaiting payment`}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link
-            href="/portal/tickets/new"
-            className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
-          >
-            New ticket
-          </Link>
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-subtle hover:text-ink"
-          >
-            Sign out
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => void signOut()}
+          className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-subtle hover:text-ink"
+        >
+          Sign out
+        </button>
       </div>
 
-      {tickets.length === 0 ? (
+      {invoices.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No tickets yet.</p>
+          <p className="font-medium">No invoices yet.</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-            If something on your site needs attention, open a ticket and we will
-            pick it up.
+            They will show up here once one is issued to you.
           </p>
         </div>
       ) : (
         <ul className="mt-8 space-y-3">
-          {tickets.map((ticket) => (
-            <li key={ticket.id}>
-              <Link
-                href={`/portal/tickets/${ticket.id}`}
-                className="block rounded-xl border border-line bg-surface p-5 transition-shadow hover:shadow-[0_1px_3px_rgba(28,25,23,0.06),0_8px_24px_-8px_rgba(28,25,23,0.12)]"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="font-semibold tracking-tight">
-                        {ticket.subject}
-                      </h2>
-                      <span
-                        className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLES[ticket.status]}`}
-                      >
-                        {STATUS_LABELS[ticket.status]}
-                      </span>
-                    </div>
-                    <p className="mt-1 font-mono text-xs text-muted">
-                      {ticket.reference}
-                    </p>
+          {invoices.map((invoice) => (
+            <li
+              key={invoice.id}
+              className="rounded-xl border border-line bg-surface p-5"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-mono font-semibold tracking-tight">
+                      {invoice.number}
+                    </h2>
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLES[invoice.status]}`}
+                    >
+                      {STATUS_LABELS[invoice.status]}
+                    </span>
                   </div>
-                  <span className="text-xs text-muted">
-                    {ticket._count.messages} message
-                    {ticket._count.messages === 1 ? "" : "s"}
-                  </span>
+                  <p className="mt-1.5 text-xs text-muted">
+                    {invoice.issuedAt &&
+                      `Issued ${new Date(invoice.issuedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}
+                    {invoice.dueAt &&
+                      ` · due ${new Date(invoice.dueAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}
+                  </p>
                 </div>
-              </Link>
+                <div className="text-right">
+                  <p className="font-semibold tabular-nums">
+                    {formatMoney(invoice.totalCents, invoice.currency)}
+                  </p>
+                  {invoice.status !== "PAID" && invoice.paidCents > 0 && (
+                    <p className="text-xs text-muted">
+                      {formatMoney(
+                        invoice.totalCents - invoice.paidCents,
+                        invoice.currency,
+                      )}{" "}
+                      outstanding
+                    </p>
+                  )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
       )}
+
+      <p className="mt-6 text-xs leading-relaxed text-muted">
+        Questions about an invoice? Email{" "}
+        <a
+          href={`mailto:${SITE.businessEmail}`}
+          className="font-medium text-accent hover:underline"
+        >
+          {SITE.businessEmail}
+        </a>
+      </p>
     </div>
   );
 }

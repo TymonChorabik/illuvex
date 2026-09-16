@@ -15,7 +15,7 @@ export async function GET() {
       id: true, name: true, email: true, contactName: true, city: true,
       createdAt: true,
       users: { select: { id: true, emailVerifiedAt: true, lastLoginAt: true } },
-      _count: { select: { tickets: true, quotes: true } },
+      _count: { select: { quotes: true } },
     },
   });
   return NextResponse.json({ clients });

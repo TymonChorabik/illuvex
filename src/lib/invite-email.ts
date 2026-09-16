@@ -34,8 +34,7 @@ export async function sendInviteEmail(
         <h1 style="margin:0 0 8px;font-size:20px;color:#1c1917">Set up your account</h1>
         <p style="margin:0 0 22px;font-size:14px;line-height:1.6;color:#57534e">
           We have set up portal access for you. From there you can see your
-          quotes and projects, and raise a support ticket whenever something
-          needs attention.
+          invoices whenever you need them.
         </p>
         <a href="${escapeHtml(link)}"
            style="display:inline-block;background:#d94f0b;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600">

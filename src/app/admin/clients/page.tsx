@@ -11,7 +11,7 @@ type Client = {
   contactName: string | null;
   city: string | null;
   users: { id: string; emailVerifiedAt: string | null; lastLoginAt: string | null }[];
-  _count: { tickets: number; quotes: number };
+  _count: { quotes: number };
 };
 
 export default function ClientsPage() {
@@ -83,8 +83,7 @@ export default function ClientsPage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Clients</h1>
           <p className="mt-1.5 text-sm text-muted">
-            Invite a client and they can sign in to raise tickets and see their
-            quotes.
+            Invite a client and they can sign in to see their invoices.
           </p>
         </div>
       </div>
@@ -142,9 +141,7 @@ export default function ClientsPage() {
                     </p>
                     <p className="mt-1 text-xs text-muted">
                       {client._count.quotes} quote
-                      {client._count.quotes === 1 ? "" : "s"} ·{" "}
-                      {client._count.tickets} ticket
-                      {client._count.tickets === 1 ? "" : "s"}
+                      {client._count.quotes === 1 ? "" : "s"}
                     </p>
                   </div>
 
