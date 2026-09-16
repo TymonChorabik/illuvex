@@ -1,7 +1,8 @@
 # What to do next
 
-Written 8 September 2026. This is the honest state of the project: what works,
-what is still a placeholder, and what to do in what order.
+Written 8 September 2026, updated 16 September 2026. This is the honest state
+of the project: what works, what is still a placeholder, and what to do in
+what order.
 
 For how to run it, see [README.md](README.md).
 
@@ -25,24 +26,23 @@ Put them in `.env.local` and restart. Note that Resend's default sender only
 delivers to the address that owns the Resend account until you verify a domain
 — so test with your own address first.
 
-### Answer the packages question
+### Decide the fate of the ticket tables
 
-Your friend said *"the package cards below the filter are not needed"*. That
-reads two ways and they lead to very different pages:
-
-1. Keep fixed packages but show them as a compact list instead of cards.
-2. Drop fixed packages entirely — clients request a custom quote (offerte)
-   instead, which is what the rest of the brief points at.
-
-I did not guess, because option 2 deletes the main public page. Ask him, then
-it is a short change either way.
+The built-in ticket system (admin queue, portal ticket list) has been removed
+— you're integrating a separately-built one instead. The `Ticket` and
+`TicketMessage` tables are still in `prisma/schema.prisma` and the database,
+untouched but unused, in case that integration wants to reuse them. Say the
+word if you'd rather have them dropped with a migration.
 
 ### Replace the placeholder content
 
-- **Packages and prices** in `src/lib/offers.ts` are invented. Replace them
-  with your real services, or delete them if the answer above is option 2.
-- **Contact details** in `src/lib/site.ts` are deliberately fake
-  (`hello@illudesk.example`, `+00 0000 000000`, `City, Country`). The
+- **Packages and prices** in `src/lib/offers.ts` are invented. The public
+  homepage no longer shows them as cards (resolved: it's quote-only now,
+  per "cards under filter not needed"), but the catalogue still backs the
+  chat assistant's pricing knowledge and the admin quote-line suggestions.
+- **Contact and legal details** in `src/lib/site.ts` are deliberately fake —
+  business name/email/phone/address, plus KVK number, BTW number, bank
+  account and BIC, all of which now print on every quote and invoice. The
   `.example` domain can never be registered, so nothing can accidentally
   reach a real inbox.
 - **The logo** in `src/components/logo.tsx` is a placeholder geometric mark.
@@ -55,20 +55,26 @@ it is a short change either way.
 
 All of it is browser-tested and covered in the README's security section.
 
-- **Public site** — packages with filters, request form with emailed
+- **Public site** — filter sidebar feeding a custom-quote request, emailed
   confirmation, Claude assistant, custom 404 and error pages.
 - **Security** — CSP, HSTS, rate limiting, scrypt password hashing, database
   sessions, account lockout, `npm audit` clean.
-- **Admin** — real accounts (not a shared password), order queue, client list.
-- **Quotes (offertes)** — create, send, client accepts or declines from an
-  emailed link with no account. Sent quotes are immutable; decisions are final
-  but idempotent.
-- **Tickets and client portal** — invite a client, they set their own
-  password, raise tickets. Staff reply with optional internal notes the client
-  never sees.
+- **Admin** — real accounts (not a shared password), order queue, client
+  list, one consistent nav across every section.
+- **Quotes (offertes)** — create, send (emailed, or copy the link when
+  Resend isn't configured), client accepts or declines from a no-account
+  link, printable/downloadable. Sent quotes are immutable; decisions are
+  final but idempotent. An accepted quote turns into an invoice in one click.
+- **Client portal** — invite a client, they set their own password, sign in
+  to see their own invoices.
 - **Invoices** — draft to issue to payment, gapless numbering allocated at
   issue, billing snapshot frozen at issue, print-to-PDF, and CSV exports for
   reconciliation and the BTW return.
+- **Every quote/invoice carries the full field set**: client company,
+  contact, address and BTW number; your own company's address, KVK number,
+  BTW number, bank account and BIC; a permanent per-client number (KLT-0001,
+  allocated once); invoice/quote number, dates, line items, subtotal, tax,
+  total.
 
 Run `npm test` for the money and CSV test suites (21 cases).
 

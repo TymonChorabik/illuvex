@@ -137,33 +137,30 @@ Mark one package with `popular: true` to give it the "Most picked" badge.
 ## How it fits together
 
 ```
-src/app/page.tsx               Packages page — filter sidebar + card grid
+src/app/page.tsx               Filter sidebar + "Get a custom quote" request
 src/app/transactions/page.tsx  Look up past requests by email
 src/app/admin/page.tsx         Staff dashboard — all requests, change status
 src/app/admin/quotes/          Offertes: list, send, and the new-quote editor
-src/app/admin/tickets/         Staff ticket queue and thread (with internal notes)
 src/app/admin/clients/         Client list + portal invitations
 src/app/admin/invoices/        Facturen: list, bookkeeping totals, CSV export
 src/app/admin/invoices/[id]/   The invoice document (print to PDF)
-src/app/portal/                Client portal: sign in, tickets, set password
-src/app/quote/[token]/page.tsx What the client sees — accept or decline, no login
+src/app/portal/                Client portal: sign in, own invoices, set password
+src/app/quote/[token]/page.tsx What the client sees — accept, decline, or print, no login
 src/app/layout.tsx             Navbar, footer, and the chat widget on every page
 src/app/api/orders/route.ts    POST saves a request and emails it; GET looks them up
 src/app/api/chat/route.ts      Streams the assistant's replies
 src/app/api/admin/orders/...   Staff-only list + status updates
 src/app/api/admin/quotes/...   Staff-only quote create/edit/send
 src/app/api/quotes/[token]     The client's accept/decline endpoint
-src/app/api/portal/...         Portal auth, tickets, set-password
-src/app/api/admin/tickets/...  Staff-only ticket queue and replies
-src/lib/tickets.ts             Ticket lifecycle, scoped by tenant and client
+src/app/api/portal/...         Portal auth, own invoices, set-password
 src/lib/invite.ts              Portal invitations and set-password tokens
 src/lib/invoices.ts            Invoice lifecycle, numbering, payments
 src/lib/csv.ts                 CSV writing (has tests — injection + BOM)
 src/lib/money.ts               Cents + basis-point arithmetic (has tests)
-src/lib/quotes.ts              Quote lifecycle and reference numbering
+src/lib/quotes.ts              Quote lifecycle, reference and client numbering
 src/lib/db.ts                  Order storage
 src/lib/email.ts               Email templates and sending
-src/components/                Navbar, filters, cards, request modal, chat widget
+src/components/                Navbar, filters, request modal, chat widget
 ```
 
 ### Orders
@@ -243,29 +240,28 @@ cents, VAT rates are basis points (2100 = 21%), and VAT is rounded per line
 then summed — so the printed line amounts add up to the printed total instead
 of leaving a stray cent. Run `npm test` after touching it.
 
-### Tickets and the client portal
+### The client portal
 
 Staff invite a client from **/admin/clients**; the client gets a link, chooses
-their own password, and can then raise tickets at **/portal**. We never email a
-password — an emailed password lives in an inbox forever.
+their own password, and can then sign in at **/portal** to see their own
+invoices. We never email a password — an emailed password lives in an inbox
+forever.
 
 The rules that matter, all covered by the checks below:
 
-- **A customer only ever sees their own client's tickets.** Every portal query
+- **A customer only ever sees their own client's invoices.** The portal query
   is scoped by the `clientId` on the session, never by anything in the request
-  body. Reading or replying to another client's ticket returns `404`, not
-  `403` — we do not confirm the ticket exists.
-- **Internal notes are staff-only.** `getTicket` takes a required
-  `includeInternal` argument rather than an optional flag, so a caller cannot
-  leak notes by forgetting it. The portal passes `false`; nothing else can.
+  body.
 - **Roles do not overlap.** A customer hitting a staff route gets `403`; staff
   signing in at the portal are refused and their session revoked.
-- **Replies move the status automatically** — staff reply sets "waiting on
-  client", client reply sets "needs a reply". An internal note changes nothing,
-  because it is not a reply to the customer.
-- **Closed tickets are closed.** Replies return `409` until staff reopen.
 - **Invite links are single-use** and expire in 14 days; setting a password
   invalidates every session opened before it.
+
+Note: there used to be a built-in support ticket system here (raise a ticket,
+staff reply with optional internal notes). It's gone — a separately-built
+ticket system is being integrated instead. The `Ticket`/`TicketMessage`
+tables are still in the schema in case that integration wants to reuse them,
+but nothing in the app reads or writes them any more.
 
 ### The admin dashboard
 

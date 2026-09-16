@@ -37,7 +37,10 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-12">
-      <div className="rounded-2xl border border-line bg-surface">
+      <p className="mb-3 text-xs text-muted print:hidden">
+        Use your browser&apos;s Print → Save as PDF to download this.
+      </p>
+      <div className="rounded-2xl border border-line bg-surface print:rounded-none print:border-0">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-7 py-6">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-muted">
@@ -47,22 +50,77 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
               {quote.title}
             </h1>
             <p className="mt-1 text-sm text-muted">
-              For {quote.client.name}
-              {quote.validUntil ? (
+              {quote.validUntil && (
                 <>
-                  {" · valid until "}
+                  Valid until{" "}
                   {quote.validUntil.toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </>
-              ) : null}
+              )}
             </p>
           </div>
-          <span className="text-sm font-medium text-muted">
-            {quote.tenant.name}
-          </span>
+          <div className="text-right text-xs leading-relaxed text-muted">
+            <p className="text-sm font-semibold text-ink">{quote.tenant.name}</p>
+            {SITE.addressLine1}
+            <br />
+            {SITE.city}, {SITE.country}
+            <br />
+            KVK {SITE.kvkNumber} · BTW {SITE.vatNumber}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap justify-between gap-6 border-b border-line px-7 py-6">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
+              For
+            </p>
+            <p className="mt-1.5 font-medium">{quote.client.name}</p>
+            <p className="text-sm leading-relaxed text-muted">
+              {quote.client.contactName && (
+                <>
+                  {quote.client.contactName}
+                  <br />
+                </>
+              )}
+              {quote.client.addressLine1 && (
+                <>
+                  {quote.client.addressLine1}
+                  <br />
+                </>
+              )}
+              {(quote.client.postcode || quote.client.city) && (
+                <>
+                  {[quote.client.postcode, quote.client.city]
+                    .filter(Boolean)
+                    .join(" ")}
+                  <br />
+                </>
+              )}
+              {quote.client.country && (
+                <>
+                  {quote.client.country}
+                  <br />
+                </>
+              )}
+              {quote.client.email}
+            </p>
+            {quote.client.vatNumber && (
+              <p className="mt-1 text-sm text-muted">
+                BTW {quote.client.vatNumber}
+              </p>
+            )}
+          </div>
+          {quote.client.number && (
+            <div className="text-right text-sm text-muted">
+              <p className="text-[11px] font-medium uppercase tracking-wider">
+                Client
+              </p>
+              <p className="mt-1.5">{quote.client.number}</p>
+            </div>
+          )}
         </div>
 
         <div className="px-7 py-6">
@@ -135,9 +193,11 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
               {note.label}
             </div>
           ) : (
-            <QuoteDecision token={token} />
+            <div className="print:hidden">
+              <QuoteDecision token={token} />
+            </div>
           )}
-          <p className="mt-4 text-xs leading-relaxed text-muted">
+          <p className="mt-4 text-xs leading-relaxed text-muted print:hidden">
             Questions before deciding? Email{" "}
             <a
               href={`mailto:${SITE.businessEmail}?subject=Offerte ${quote.reference}`}

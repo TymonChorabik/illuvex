@@ -68,6 +68,34 @@ function totalsFor(lines: QuoteLineInput[]) {
   );
 }
 
+/**
+ * Allocates the next client number, e.g. KLT-0007.
+ *
+ * Unlike a quote or invoice reference this never resets by year -- a client
+ * keeps the same number for as long as they exist. Same advisory-lock
+ * pattern as nextReference, scoped per tenant only.
+ */
+async function nextClientNumber(
+  tx: Prisma.TransactionClient,
+  tenantId: string,
+): Promise<string> {
+  const lockKey = `client:${tenantId}`;
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey}))`;
+
+  const prefix = "KLT-";
+  const latest = await tx.client.findFirst({
+    where: { tenantId, number: { startsWith: prefix } },
+    orderBy: { number: "desc" },
+    select: { number: true },
+  });
+
+  const lastNumber = latest?.number
+    ? Number.parseInt(latest.number.slice(prefix.length), 10)
+    : 0;
+  const next = (Number.isFinite(lastNumber) ? lastNumber : 0) + 1;
+  return `${prefix}${String(next).padStart(4, "0")}`;
+}
+
 /** Finds a client by email within the tenant, or creates one. */
 async function upsertClient(
   tx: Prisma.TransactionClient,
@@ -84,6 +112,7 @@ async function upsertClient(
   const created = await tx.client.create({
     data: {
       tenantId,
+      number: await nextClientNumber(tx, tenantId),
       name: input.name.trim(),
       contactName: input.contactName?.trim() || null,
       email,

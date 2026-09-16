@@ -14,7 +14,7 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur">
+    <header className="site-header sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-5">
         <Link href="/" aria-label="Home">
           <Wordmark />

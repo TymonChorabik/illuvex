@@ -100,7 +100,9 @@ export default function NewQuotePage() {
             email: form.get("clientEmail"),
             phone: form.get("phone"),
             vatNumber: form.get("vatNumber"),
+            addressLine1: form.get("addressLine1"),
             city: form.get("city"),
+            country: form.get("country"),
           },
           title: form.get("title"),
           notes: form.get("notes"),
@@ -169,10 +171,22 @@ export default function NewQuotePage() {
               <input id="vatNumber" name="vatNumber" maxLength={40} className={field} placeholder="NL000000000B00" />
             </div>
             <div>
+              <label className={label} htmlFor="addressLine1">
+                Street
+              </label>
+              <input id="addressLine1" name="addressLine1" maxLength={200} className={field} />
+            </div>
+            <div>
               <label className={label} htmlFor="city">
                 City
               </label>
               <input id="city" name="city" maxLength={100} className={field} />
+            </div>
+            <div>
+              <label className={label} htmlFor="country">
+                Country
+              </label>
+              <input id="country" name="country" maxLength={100} className={field} />
             </div>
           </div>
           <p className="mt-3 text-xs text-muted">

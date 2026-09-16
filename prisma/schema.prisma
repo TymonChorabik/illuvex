@@ -133,6 +133,11 @@ model Client {
   tenantId String
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  /// Human-readable customer number shown on quotes/invoices, e.g.
+  /// "KLT-0001". Allocated once when the client is first created and never
+  /// reused -- a permanent identifier, unlike a quote/invoice number which
+  /// resets in scope. Nullable only so existing rows can be backfilled.
+  number       String?
   name         String
   contactName  String?
   email        String
@@ -155,6 +160,7 @@ model Client {
   tickets  Ticket[]
   invoices Invoice[]
 
+  @@unique([tenantId, number])
   @@index([tenantId, email])
   @@map("clients")
 }

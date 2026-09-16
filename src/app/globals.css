@@ -24,13 +24,16 @@ body {
   outline-offset: 2px;
 }
 
-/* Save-as-PDF from the browser is how invoices become files, so the chrome
-   around the document must not print. */
+/* Save-as-PDF from the browser is how invoices and quotes become files, so
+   the site chrome around the document must not print. Scoped by class, not
+   the bare `header`/`footer` tags: the invoice and quote documents use those
+   same elements for their own letterhead, and an unscoped rule was hiding
+   that along with the navbar. */
 @media print {
   body {
     background: #fff;
   }
-  header,
+  header.site-header,
   footer.site-footer,
   nav {
     display: none !important;

@@ -86,11 +86,18 @@ export default async function InvoiceDetailPage(
           <div>
             <p className="text-lg font-semibold tracking-tight">{SITE.name}</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">
+              {SITE.addressLine1}
+              <br />
+              {SITE.city}, {SITE.country}
+              <br />
               {SITE.businessEmail}
               <br />
               {SITE.phone}
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-muted">
+              KVK {SITE.kvkNumber}
               <br />
-              {SITE.location}
+              BTW {SITE.vatNumber}
             </p>
           </div>
           <div className="text-right">
@@ -105,6 +112,11 @@ export default async function InvoiceDetailPage(
               <br />
               Due {date(invoice.dueAt)}
             </p>
+            {invoice.client.number && (
+              <p className="mt-2 text-xs text-muted">
+                Client {invoice.client.number}
+              </p>
+            )}
           </div>
         </header>
 
@@ -243,10 +255,15 @@ export default async function InvoiceDetailPage(
               issued.
             </p>
           ) : (
-            <p>
-              Please pay {formatMoney(outstanding, invoice.currency)} by{" "}
-              {date(invoice.dueAt)}, quoting {invoice.number}.
-            </p>
+            <>
+              <p>
+                Please pay {formatMoney(outstanding, invoice.currency)} by{" "}
+                {date(invoice.dueAt)}, quoting {invoice.number}.
+              </p>
+              <p className="mt-2">
+                {SITE.bankAccount} · {SITE.bic}
+              </p>
+            </>
           )}
         </footer>
       </article>
