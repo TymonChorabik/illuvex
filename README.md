@@ -143,7 +143,7 @@ src/app/admin/page.tsx         Staff dashboard — all requests, change status
 src/app/admin/quotes/          Offertes: list, send, and the new-quote editor
 src/app/admin/clients/         Client list + portal invitations
 src/app/admin/invoices/        Facturen: list, bookkeeping totals, CSV export
-src/app/admin/invoices/[id]/   The invoice document (print to PDF)
+src/app/admin/invoices/[id]/   The invoice document (print or download as PDF)
 src/app/portal/                Client portal: sign in, own invoices, set password
 src/app/quote/[token]/page.tsx What the client sees — accept, decline, or print, no login
 src/app/layout.tsx             Navbar, footer, and the chat widget on every page
@@ -155,6 +155,7 @@ src/app/api/quotes/[token]     The client's accept/decline endpoint
 src/app/api/portal/...         Portal auth, own invoices, set-password
 src/lib/invite.ts              Portal invitations and set-password tokens
 src/lib/invoices.ts            Invoice lifecycle, numbering, payments
+src/lib/pdf.ts                 Headless-Chrome PDF rendering
 src/lib/csv.ts                 CSV writing (has tests — injection + BOM)
 src/lib/money.ts               Cents + basis-point arithmetic (has tests)
 src/lib/quotes.ts              Quote lifecycle, reference and client numbering
@@ -217,9 +218,15 @@ explain.
   number, and filtering on status alone leaked it into the portal.
 
 **PDF:** the invoice page is a server-rendered document with a print
-stylesheet, so browser Print → Save as PDF produces the file you send. That is
-deliberately one layout rather than a separate PDF template that can drift out
-of sync with what you see on screen.
+stylesheet — one layout, deliberately, rather than a separate PDF template
+that can drift out of sync with what you see on screen. "Download PDF" on
+the invoice page (and "PDF" in the Facturen list, once issued) renders that
+same layout headlessly via `src/lib/pdf.ts` and streams back a real file,
+ready to attach to an email. Browser Print → Save as PDF still works too
+and needs nothing configured; the download button needs a Chrome/Chromium
+binary on the server (`PDF_CHROME_PATH`, or it checks common install
+locations) and fails with a clear message rather than a stack trace if it
+can't find one.
 
 **Bookkeeping export**, from the Facturen page:
 

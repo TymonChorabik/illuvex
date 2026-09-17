@@ -76,9 +76,18 @@ export default async function InvoiceDetailPage(
         >
           ← All invoices
         </Link>
-        <p className="text-xs text-muted">
-          Use your browser&apos;s Print → Save as PDF to send this.
-        </p>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted">
+            Or use your browser&apos;s Print → Save as PDF.
+          </span>
+          <a
+            href={`/api/admin/invoices/${invoice.id}/pdf`}
+            download={`${invoice.number ?? "invoice-draft"}.pdf`}
+            className="btn-gradient rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          >
+            Download PDF
+          </a>
+        </div>
       </div>
 
       <article className="rounded-2xl border border-line bg-surface p-9 print:rounded-none print:border-0 print:p-0">

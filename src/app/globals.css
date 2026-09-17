@@ -68,7 +68,8 @@ h6 {
   }
   header.site-header,
   footer.site-footer,
-  nav {
+  nav,
+  .chat-widget {
     display: none !important;
   }
   main {

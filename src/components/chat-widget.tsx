@@ -102,7 +102,7 @@ export function ChatWidget() {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="fixed bottom-5 right-5 z-40 grid h-13 w-13 place-items-center rounded-full bg-ink p-3.5 text-white shadow-lg transition-transform hover:scale-105"
+        className="chat-widget fixed bottom-5 right-5 z-40 grid h-13 w-13 place-items-center rounded-full bg-ink p-3.5 text-white shadow-lg transition-transform hover:scale-105"
       >
         {open ? (
           <svg viewBox="0 0 20 20" className="h-5 w-5" aria-hidden="true">
@@ -128,7 +128,7 @@ export function ChatWidget() {
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-5 z-40 flex h-[min(520px,calc(100vh-8rem))] w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl">
+        <div className="chat-widget fixed bottom-24 right-5 z-40 flex h-[min(520px,calc(100vh-8rem))] w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl">
           <div className="flex items-center gap-2.5 border-b border-line px-4 py-3">
             <span className="h-2 w-2 rounded-full bg-accent" />
             <div>

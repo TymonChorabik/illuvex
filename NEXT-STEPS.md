@@ -68,8 +68,8 @@ All of it is browser-tested and covered in the README's security section.
 - **Client portal** — invite a client, they set their own password, sign in
   to see their own invoices.
 - **Invoices** — draft to issue to payment, gapless numbering allocated at
-  issue, billing snapshot frozen at issue, print-to-PDF, and CSV exports for
-  reconciliation and the BTW return.
+  issue, billing snapshot frozen at issue, a real downloadable PDF, and CSV
+  exports for reconciliation and the BTW return.
 - **Every quote/invoice carries the full field set**: client company,
   contact, address and BTW number; your own company's address, KVK number,
   BTW number, bank account and BIC; a permanent per-client number (KLT-0001,
@@ -86,11 +86,26 @@ Roughly in order of how much they are worth relative to the effort.
 
 ### Email quotes and invoices automatically
 
-Right now sending a quote marks it sent and shows you a link to paste. Once
-`RESEND_API_KEY` exists, quote emails send themselves. Invoices still need a
-human to hit Print → Save as PDF; attaching a PDF to an email needs
-server-side rendering (headless Chrome on the server, or a PDF library). A
-contained job, not a rewrite.
+Sending a quote marks it sent and, once `RESEND_API_KEY` exists, emails
+itself — until then it shows you a link to paste. Invoices now generate a
+real PDF on demand ("Download PDF" on the invoice page and in the Facturen
+list, headless Chrome server-side, reusing the same print stylesheet the
+document already had), so it's a file you can attach the moment an invoice
+is issued — no more walking through the browser's print dialog by hand.
+
+What's still manual: actually attaching that PDF to an outgoing email.
+Wiring that up (send button -> generate PDF -> attach -> Resend) is the
+natural next step and mostly plumbing at this point, the hard part (PDF
+generation) is done.
+
+One thing to know before this leaves your laptop: PDF generation needs a
+real Chrome/Chromium binary on the server (`PDF_CHROME_PATH` env var, or it
+looks in the usual install locations). That's present on your Mac by
+default; most hosting platforms are not. On serverless (Vercel, Lambda)
+swap `puppeteer-core`'s browser for `@sparticuz/chromium` — same API, just
+a different way of finding the binary. On a regular VPS or container,
+installing Chrome once is enough. Either way it fails with a clear message
+rather than a stack trace if no browser is found.
 
 ### Recurring invoices for the Care Plan
 
