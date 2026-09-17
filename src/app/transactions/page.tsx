@@ -28,10 +28,10 @@ type InvoiceRow = {
 };
 
 const QUOTE_LABELS: Record<QuoteRow["status"], string> = {
-  SENT: "Awaiting your decision",
-  ACCEPTED: "Accepted",
-  REJECTED: "Declined",
-  EXPIRED: "Expired",
+  SENT: "Wacht op jouw beslissing",
+  ACCEPTED: "Geaccepteerd",
+  REJECTED: "Afgewezen",
+  EXPIRED: "Verlopen",
 };
 
 const QUOTE_STYLES: Record<QuoteRow["status"], string> = {
@@ -42,10 +42,10 @@ const QUOTE_STYLES: Record<QuoteRow["status"], string> = {
 };
 
 const INVOICE_LABELS: Record<InvoiceRow["status"], string> = {
-  SENT: "Awaiting payment",
-  PAID: "Paid",
-  OVERDUE: "Overdue",
-  CANCELLED: "Cancelled",
+  SENT: "Wacht op betaling",
+  PAID: "Betaald",
+  OVERDUE: "Verlopen",
+  CANCELLED: "Geannuleerd",
 };
 
 const INVOICE_STYLES: Record<InvoiceRow["status"], string> = {
@@ -57,7 +57,7 @@ const INVOICE_STYLES: Record<InvoiceRow["status"], string> = {
 
 function dateLabel(value: string | null) {
   if (!value) return null;
-  return new Date(value).toLocaleDateString(undefined, {
+  return new Date(value).toLocaleDateString("nl-NL", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -84,7 +84,7 @@ export default function TransactionsPage() {
       );
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not load your requests.");
+        setError(data.error ?? "Kon je aanvragen niet laden.");
         setOrders(null);
         return;
       }
@@ -97,7 +97,7 @@ export default function TransactionsPage() {
         // Storage unavailable — the lookup still worked.
       }
     } catch {
-      setError("Couldn't reach the server. Check your connection and retry.");
+      setError("Kon de server niet bereiken. Controleer je verbinding en probeer opnieuw.");
       setOrders(null);
     } finally {
       setLoading(false);
@@ -122,10 +122,11 @@ export default function TransactionsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">Your transactions</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Jouw transacties</h1>
       <p className="mt-2 text-[15px] leading-relaxed text-muted">
-        Every request, quote and invoice tied to your email, and where each
-        one stands. Look them up with the address you used with us.
+        Elke aanvraag, offerte en factuur die aan jouw e-mailadres is
+        gekoppeld, en de status ervan. Zoek ze op met het adres dat je bij ons
+        hebt gebruikt.
       </p>
 
       <form
@@ -140,7 +141,7 @@ export default function TransactionsPage() {
           type="email"
           required
           defaultValue=""
-          placeholder="you@example.com"
+          placeholder="jij@voorbeeld.nl"
           autoComplete="email"
           className="flex-1 rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
         />
@@ -149,7 +150,7 @@ export default function TransactionsPage() {
           disabled={loading}
           className="rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
         >
-          {loading ? "Looking..." : "Look up"}
+          {loading ? "Zoeken..." : "Zoeken"}
         </button>
       </form>
 
@@ -163,10 +164,10 @@ export default function TransactionsPage() {
         <div className="mt-8 space-y-10">
           {orders.length === 0 && quotes.length === 0 && invoices.length === 0 ? (
             <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-14 text-center">
-              <p className="font-medium">Nothing under that address.</p>
+              <p className="font-medium">Niets gevonden onder dat adres.</p>
               <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-                Check the spelling, or ask for a quote on the home page to
-                start your first one.
+                Controleer de spelling, of vraag een offerte aan op de
+                homepage om je eerste te starten.
               </p>
             </div>
           ) : (
@@ -174,7 +175,7 @@ export default function TransactionsPage() {
           {orders.length > 0 && (
             <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
-                {orders.length} request{orders.length === 1 ? "" : "s"}
+                {orders.length} {orders.length === 1 ? "aanvraag" : "aanvragen"}
               </p>
               <ul className="space-y-3">
                 {orders.map((order) => (
@@ -211,8 +212,8 @@ export default function TransactionsPage() {
 
                     <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
                       <span>
-                        Sent{" "}
-                        {new Date(order.createdAt).toLocaleDateString(undefined, {
+                        Verstuurd{" "}
+                        {new Date(order.createdAt).toLocaleDateString("nl-NL", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -220,8 +221,8 @@ export default function TransactionsPage() {
                       </span>
                       <span>
                         {order.emailSent
-                          ? "Confirmation emailed"
-                          : "Confirmation not sent"}
+                          ? "Bevestiging gemaild"
+                          : "Bevestiging niet verstuurd"}
                       </span>
                       {order.company && <span>{order.company}</span>}
                     </div>
@@ -234,7 +235,7 @@ export default function TransactionsPage() {
           {quotes.length > 0 && (
             <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
-                {quotes.length} quote{quotes.length === 1 ? "" : "s"}
+                {quotes.length} {quotes.length === 1 ? "offerte" : "offertes"}
               </p>
               <ul className="space-y-3">
                 {quotes.map((quote) => (
@@ -263,7 +264,7 @@ export default function TransactionsPage() {
                       </div>
                     </div>
                     <div className="mt-4 border-t border-line pt-3 text-xs text-muted">
-                      <span>Sent {dateLabel(quote.createdAt)}</span>
+                      <span>Verstuurd {dateLabel(quote.createdAt)}</span>
                     </div>
                   </li>
                 ))}
@@ -274,7 +275,7 @@ export default function TransactionsPage() {
           {invoices.length > 0 && (
             <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
-                {invoices.length} invoice{invoices.length === 1 ? "" : "s"}
+                {invoices.length} {invoices.length === 1 ? "factuur" : "facturen"}
               </p>
               <ul className="space-y-3">
                 {invoices.map((invoice) => (
@@ -301,16 +302,18 @@ export default function TransactionsPage() {
                     </div>
                     <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
                       {invoice.issuedAt && (
-                        <span>Issued {dateLabel(invoice.issuedAt)}</span>
+                        <span>Verzonden {dateLabel(invoice.issuedAt)}</span>
                       )}
-                      {invoice.dueAt && <span>Due {dateLabel(invoice.dueAt)}</span>}
+                      {invoice.dueAt && (
+                        <span>Vervalt {dateLabel(invoice.dueAt)}</span>
+                      )}
                       {invoice.status !== "PAID" && invoice.paidCents > 0 && (
                         <span>
                           {formatMoney(
                             invoice.totalCents - invoice.paidCents,
                             invoice.currency,
                           )}{" "}
-                          outstanding
+                          openstaand
                         </span>
                       )}
                     </div>
@@ -325,14 +328,14 @@ export default function TransactionsPage() {
       )}
 
       <p className="mt-10 border-t border-line pt-5 text-xs text-muted">
-        Something look wrong? Email{" "}
+        Klopt er iets niet? Mail{" "}
         <a
           href={`mailto:${SITE.businessEmail}`}
           className="font-medium text-accent hover:underline"
         >
           {SITE.businessEmail}
         </a>{" "}
-        with your reference.
+        met je referentie.
       </p>
     </div>
   );

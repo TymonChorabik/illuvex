@@ -32,7 +32,7 @@ export default function AdminPage() {
       const response = await fetch("/api/admin/orders");
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not load requests.");
+        setError(data.error ?? "Kon aanvragen niet laden.");
         setAuthed(false);
         return;
       }
@@ -40,7 +40,7 @@ export default function AdminPage() {
       setAuthed(true);
       setPassword("");
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setLoading(false);
     }
@@ -59,13 +59,13 @@ export default function AdminPage() {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) {
-        setError(data?.error ?? "Could not sign in.");
+        setError(data?.error ?? "Kon niet inloggen.");
         return;
       }
       setUser(data?.user ?? null);
       await load();
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setLoading(false);
     }
@@ -86,11 +86,11 @@ export default function AdminPage() {
       });
       if (!response.ok) {
         const data = await response.json();
-        setError(data.error ?? "Could not save that change.");
+        setError(data.error ?? "Kon die wijziging niet opslaan.");
         setOrders(previous);
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
       setOrders(previous);
     } finally {
       setSavingId(null);
@@ -121,7 +121,7 @@ export default function AdminPage() {
   if (checking) {
     return (
       <div className="mx-auto max-w-sm px-5 py-24 text-center text-sm text-muted">
-        Checking your session...
+        Sessie controleren...
       </div>
     );
   }
@@ -131,8 +131,8 @@ export default function AdminPage() {
       <div className="mx-auto max-w-sm px-5 py-20">
         <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          Every request that comes through the site, and the controls to move
-          each one along.
+          Elke aanvraag die via de site binnenkomt, en de bediening om ze
+          allemaal verder te helpen.
         </p>
         <form
           onSubmit={(event) => {
@@ -146,7 +146,7 @@ export default function AdminPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@illudesk.example"
+            placeholder="jij@illudesk.example"
             autoComplete="username"
             className="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
           />
@@ -155,7 +155,7 @@ export default function AdminPage() {
             required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Password"
+            placeholder="Wachtwoord"
             autoComplete="current-password"
             className="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
           />
@@ -164,7 +164,7 @@ export default function AdminPage() {
             disabled={loading}
             className="w-full rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
           >
-            {loading ? "Checking..." : "Sign in"}
+            {loading ? "Bezig met controleren..." : "Inloggen"}
           </button>
         </form>
         {error && (
@@ -183,11 +183,11 @@ export default function AdminPage() {
       <AdminNav />
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Requests</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Aanvragen</h1>
           <p className="mt-1.5 text-sm text-muted">
-            {orders.length} total
-            {pendingCount > 0 && ` · ${pendingCount} awaiting a reply`}
-            {user && ` · signed in as ${user.name}`}
+            {orders.length} totaal
+            {pendingCount > 0 && ` · ${pendingCount} wacht op reactie`}
+            {user && ` · ingelogd als ${user.name}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -197,7 +197,7 @@ export default function AdminPage() {
             disabled={loading}
             className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle disabled:opacity-55"
           >
-            {loading ? "Refreshing..." : "Refresh"}
+            {loading ? "Vernieuwen..." : "Vernieuwen"}
           </button>
         </div>
       </div>
@@ -210,9 +210,9 @@ export default function AdminPage() {
 
       {orders.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No requests yet.</p>
+          <p className="font-medium">Nog geen aanvragen.</p>
           <p className="mt-1.5 text-sm text-muted">
-            They will appear here the moment someone submits one.
+            Ze verschijnen hier zodra iemand er een indient.
           </p>
         </div>
       ) : (
@@ -245,7 +245,7 @@ export default function AdminPage() {
                   </p>
                   <p className="text-sm">
                     <a
-                      href={`mailto:${order.email}?subject=Re: your ${order.offerName} request (${order.reference})`}
+                      href={`mailto:${order.email}?subject=Re: jouw aanvraag ${order.offerName} (${order.reference})`}
                       className="text-accent hover:underline"
                     >
                       {order.email}
@@ -287,11 +287,11 @@ export default function AdminPage() {
               )}
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
-                <span>{new Date(order.createdAt).toLocaleString()}</span>
+                <span>{new Date(order.createdAt).toLocaleString("nl-NL")}</span>
                 <span>
                   {order.emailSent
-                    ? "Confirmation emailed"
-                    : "Confirmation NOT sent"}
+                    ? "Bevestiging gemaild"
+                    : "Bevestiging NIET verstuurd"}
                 </span>
               </div>
             </li>

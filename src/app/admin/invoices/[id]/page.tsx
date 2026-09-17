@@ -10,7 +10,7 @@ import { InvoiceSendButton } from "@/components/invoice-send-button";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: `Invoice — ${SITE.name}`,
+  title: `Factuur — ${SITE.name}`,
 };
 
 /**
@@ -30,7 +30,7 @@ export default async function InvoiceDetailPage(
           href="/admin"
           className="mt-5 inline-block rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white"
         >
-          Sign in
+          Inloggen
         </Link>
       </div>
     );
@@ -61,7 +61,7 @@ export default async function InvoiceDetailPage(
   const outstanding = invoice.totalCents - invoice.paidCents;
   const date = (value: Date | null) =>
     value
-      ? value.toLocaleDateString("en-GB", {
+      ? value.toLocaleDateString("nl-NL", {
           day: "numeric",
           month: "long",
           year: "numeric",
@@ -75,18 +75,18 @@ export default async function InvoiceDetailPage(
           href="/admin/invoices"
           className="text-sm text-muted transition-colors hover:text-ink"
         >
-          ← All invoices
+          ← Alle facturen
         </Link>
         <div className="flex items-start gap-3">
           <span className="mt-2 text-xs text-muted">
-            Or use your browser&apos;s Print → Save as PDF.
+            Of gebruik Afdrukken → Opslaan als PDF in je browser.
           </span>
           <a
             href={`/api/admin/invoices/${invoice.id}/pdf`}
-            download={`${invoice.number ?? "invoice-draft"}.pdf`}
+            download={`${invoice.number ?? "factuur-concept"}.pdf`}
             className="btn-gradient rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
-            Download PDF
+            PDF downloaden
           </a>
           {invoice.number && (
             <InvoiceSendButton
@@ -121,16 +121,16 @@ export default async function InvoiceDetailPage(
               {invoice.status === "DRAFT" ? "Concept factuur" : "Factuur"}
             </p>
             <p className="mt-1 font-mono text-lg font-semibold">
-              {invoice.number ?? "Not issued"}
+              {invoice.number ?? "Niet uitgegeven"}
             </p>
             <p className="mt-2 text-xs text-muted">
-              Issued {date(invoice.issuedAt)}
+              Uitgegeven {date(invoice.issuedAt)}
               <br />
-              Due {date(invoice.dueAt)}
+              Vervalt {date(invoice.dueAt)}
             </p>
             {invoice.client.number && (
               <p className="mt-2 text-xs text-muted">
-                Client {invoice.client.number}
+                Klant {invoice.client.number}
               </p>
             )}
           </div>
@@ -139,7 +139,7 @@ export default async function InvoiceDetailPage(
         <section className="flex flex-wrap justify-between gap-6 border-b border-line py-7">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
-              Bill to
+              Factuuradres
             </p>
             <p className="mt-1.5 font-medium">{billTo.name}</p>
             <p className="text-sm leading-relaxed text-muted">
@@ -176,7 +176,7 @@ export default async function InvoiceDetailPage(
           {invoice.quote && (
             <div className="text-right text-sm text-muted">
               <p className="text-[11px] font-medium uppercase tracking-wider">
-                Reference
+                Referentie
               </p>
               <p className="mt-1.5">{invoice.quote.reference}</p>
               <p>{invoice.quote.title}</p>
@@ -188,11 +188,11 @@ export default async function InvoiceDetailPage(
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted">
-                <th className="pb-2 font-medium">Description</th>
-                <th className="pb-2 text-right font-medium">Qty</th>
-                <th className="pb-2 text-right font-medium">Unit</th>
+                <th className="pb-2 font-medium">Omschrijving</th>
+                <th className="pb-2 text-right font-medium">Aantal</th>
+                <th className="pb-2 text-right font-medium">Prijs</th>
                 <th className="pb-2 text-right font-medium">BTW</th>
-                <th className="pb-2 text-right font-medium">Net</th>
+                <th className="pb-2 text-right font-medium">Netto</th>
               </tr>
             </thead>
             <tbody>
@@ -218,7 +218,7 @@ export default async function InvoiceDetailPage(
 
           <div className="ml-auto mt-6 max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Subtotal</span>
+              <span className="text-muted">Subtotaal</span>
               <span className="tabular-nums">
                 {formatMoney(invoice.subtotalCents, invoice.currency)}
               </span>
@@ -236,7 +236,7 @@ export default async function InvoiceDetailPage(
               </div>
             ))}
             <div className="flex justify-between border-t-2 border-ink pt-2 text-base font-semibold">
-              <span>Total</span>
+              <span>Totaal</span>
               <span className="tabular-nums">
                 {formatMoney(invoice.totalCents, invoice.currency)}
               </span>
@@ -244,13 +244,13 @@ export default async function InvoiceDetailPage(
             {invoice.paidCents > 0 && (
               <>
                 <div className="flex justify-between pt-1">
-                  <span className="text-muted">Paid</span>
+                  <span className="text-muted">Betaald</span>
                   <span className="tabular-nums">
                     −{formatMoney(invoice.paidCents, invoice.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between font-semibold">
-                  <span>Outstanding</span>
+                  <span>Openstaand</span>
                   <span className="tabular-nums">
                     {formatMoney(outstanding, invoice.currency)}
                   </span>
@@ -263,18 +263,19 @@ export default async function InvoiceDetailPage(
         <footer className="border-t border-line pt-6 text-xs leading-relaxed text-muted">
           {invoice.status === "PAID" ? (
             <p className="font-medium text-ink">
-              Paid in full on {date(invoice.paidAt)} — thank you.
+              Volledig betaald op {date(invoice.paidAt)} — bedankt.
             </p>
           ) : invoice.status === "DRAFT" ? (
             <p className="font-medium text-accent">
-              This is a draft. It has no invoice number and is not payable until
-              issued.
+              Dit is een concept. Er is nog geen factuurnummer en betaling is
+              nog niet mogelijk totdat de factuur is uitgegeven.
             </p>
           ) : (
             <>
               <p>
-                Please pay {formatMoney(outstanding, invoice.currency)} by{" "}
-                {date(invoice.dueAt)}, quoting {invoice.number}.
+                Gelieve {formatMoney(outstanding, invoice.currency)} te
+                betalen vóór {date(invoice.dueAt)}, onder vermelding van{" "}
+                {invoice.number}.
               </p>
               <p className="mt-2">
                 {SITE.bankAccount} · {SITE.bic}

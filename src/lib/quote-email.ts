@@ -65,18 +65,18 @@ export async function sendQuoteEmail(
       <div style="padding:28px">
         <h1 style="margin:0 0 8px;font-size:20px;color:#1c1917">${escapeHtml(quote.title)}</h1>
         <p style="margin:0 0 22px;font-size:14px;line-height:1.6;color:#57534e">
-          Hi ${escapeHtml(greeting)}, here is the quote we discussed. You can
-          accept or decline it with the button below — no account needed.
+          Hoi ${escapeHtml(greeting)}, hierbij de offerte die we hebben besproken. Je kunt
+          deze accepteren of afwijzen met de knop hieronder — geen account nodig.
         </p>
 
         <table style="width:100%;border-collapse:collapse;margin-bottom:6px">${rows}</table>
 
         <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14px">
-          <tr><td style="padding:6px 0;color:#78716c">Subtotal</td>
+          <tr><td style="padding:6px 0;color:#78716c">Subtotaal</td>
               <td style="padding:6px 0;text-align:right;color:#1c1917">${escapeHtml(formatMoney(quote.subtotalCents, currency))}</td></tr>
           <tr><td style="padding:6px 0;color:#78716c">BTW</td>
               <td style="padding:6px 0;text-align:right;color:#1c1917">${escapeHtml(formatMoney(quote.vatCents, currency))}</td></tr>
-          <tr><td style="padding:10px 0 0;font-weight:700;color:#1c1917;border-top:2px solid #1c1917">Total</td>
+          <tr><td style="padding:10px 0 0;font-weight:700;color:#1c1917;border-top:2px solid #1c1917">Totaal</td>
               <td style="padding:10px 0 0;text-align:right;font-weight:700;color:#1c1917;border-top:2px solid #1c1917">${escapeHtml(formatMoney(quote.totalCents, currency))}</td></tr>
         </table>
 
@@ -90,15 +90,15 @@ export async function sendQuoteEmail(
 
         <a href="${escapeHtml(link)}"
            style="display:inline-block;background:#d94f0b;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600">
-          View and respond
+          Bekijken en reageren
         </a>
 
         <p style="margin:22px 0 0;font-size:13px;line-height:1.6;color:#78716c">
           ${
             quote.validUntil
-              ? `This quote is valid until ${escapeHtml(quote.validUntil.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }))}. `
+              ? `Deze offerte is geldig tot ${escapeHtml(quote.validUntil.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" }))}. `
               : ""
-          }Questions? Just reply to this email.
+          }Vragen? Antwoord gewoon op deze e-mail.
         </p>
       </div>
     </div>
@@ -114,18 +114,18 @@ export async function sendQuoteEmail(
         `  ${l.quantity} x ${l.description} — ${formatMoney(lineTotals(l).netCents, currency)}`,
     ),
     ``,
-    `Subtotal: ${formatMoney(quote.subtotalCents, currency)}`,
-    `BTW:      ${formatMoney(quote.vatCents, currency)}`,
-    `Total:    ${formatMoney(quote.totalCents, currency)}`,
+    `Subtotaal: ${formatMoney(quote.subtotalCents, currency)}`,
+    `BTW:       ${formatMoney(quote.vatCents, currency)}`,
+    `Totaal:    ${formatMoney(quote.totalCents, currency)}`,
     ``,
-    `View and respond: ${link}`,
+    `Bekijken en reageren: ${link}`,
   ].join("\n");
 
   if (!resend) {
     console.warn(
-      `[quote-email] RESEND_API_KEY not set — quote ${quote.reference} was not emailed.`,
+      `[quote-email] RESEND_API_KEY niet ingesteld — offerte ${quote.reference} is niet gemaild.`,
     );
-    console.info(`[quote-email] link for ${quote.client.email}: ${link}`);
+    console.info(`[quote-email] link voor ${quote.client.email}: ${link}`);
     return { sent: false, reason: "RESEND_API_KEY is not configured" };
   }
 

@@ -98,12 +98,12 @@ export function FilterPanel({
             onClick={onReset}
             className="text-xs font-medium text-accent hover:underline"
           >
-            Clear {activeCount}
+            Wis {activeCount}
           </button>
         )}
       </div>
 
-      <Group title="What you need">
+      <Group title="Wat je nodig hebt">
         {(
           Object.entries(CATEGORY_LABELS) as [
             keyof typeof CATEGORY_LABELS,
@@ -132,7 +132,7 @@ export function FilterPanel({
         ))}
       </Group>
 
-      <Group title="Timeline">
+      <Group title="Doorlooptijd">
         {(
           Object.entries(TIMELINE_LABELS) as [
             keyof typeof TIMELINE_LABELS,
@@ -148,7 +148,7 @@ export function FilterPanel({
         ))}
       </Group>
 
-      <Group title="Must include">
+      <Group title="Moet inbegrepen zijn">
         {(
           Object.entries(FEATURE_LABELS) as [keyof typeof FEATURE_LABELS, string][]
         ).map(([value, label]) => (

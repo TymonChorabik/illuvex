@@ -152,7 +152,7 @@ export async function createOrder(input: NewOrder): Promise<Order> {
       if (code !== "P2002") throw error; // not a unique-constraint clash
     }
   }
-  throw new Error("Could not allocate a unique order reference.");
+  throw new Error("Kon geen unieke aanvraagreferentie toewijzen.");
 }
 
 export async function markEmailSent(id: string) {

@@ -16,10 +16,10 @@ export type ParsedLines =
 
 export function parseInvoiceLines(raw: unknown): ParsedLines {
   if (!Array.isArray(raw) || raw.length === 0) {
-    return { ok: false, error: "An invoice needs at least one line." };
+    return { ok: false, error: "Een factuur heeft minstens één regel nodig." };
   }
   if (raw.length > MAX_LINES) {
-    return { ok: false, error: `An invoice can have at most ${MAX_LINES} lines.` };
+    return { ok: false, error: `Een factuur kan maximaal ${MAX_LINES} regels hebben.` };
   }
 
   const lines: InvoiceLineInput[] = [];
@@ -30,7 +30,7 @@ export function parseInvoiceLines(raw: unknown): ParsedLines {
     const description =
       typeof line.description === "string" ? line.description.trim() : "";
     if (!description || description.length > 500) {
-      return { ok: false, error: `Line ${position} needs a description.` };
+      return { ok: false, error: `Regel ${position} heeft een omschrijving nodig.` };
     }
 
     const quantity = line.quantity;
@@ -42,7 +42,7 @@ export function parseInvoiceLines(raw: unknown): ParsedLines {
     ) {
       return {
         ok: false,
-        error: `Line ${position}: quantity must be a whole number of at least 1.`,
+        error: `Regel ${position}: aantal moet een geheel getal van minstens 1 zijn.`,
       };
     }
 
@@ -55,7 +55,7 @@ export function parseInvoiceLines(raw: unknown): ParsedLines {
     ) {
       return {
         ok: false,
-        error: `Line ${position}: price must be a whole number of cents.`,
+        error: `Regel ${position}: prijs moet een geheel aantal centen zijn.`,
       };
     }
 
@@ -63,7 +63,7 @@ export function parseInvoiceLines(raw: unknown): ParsedLines {
     if (typeof vatRateBps !== "number" || !ALLOWED_VAT_BPS.includes(vatRateBps)) {
       return {
         ok: false,
-        error: `Line ${position}: VAT rate must be one of ${ALLOWED_VAT_BPS.map((b) => `${b / 100}%`).join(", ")}.`,
+        error: `Regel ${position}: BTW-tarief moet een van ${ALLOWED_VAT_BPS.map((b) => `${b / 100}%`).join(", ")} zijn.`,
       };
     }
 

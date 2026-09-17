@@ -13,19 +13,19 @@ export async function POST(
 ) {
   const limit = rateLimit(clientKey(request, "quote-decision"), 20, 10 * 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many attempts. Try again shortly.");
+    return tooManyRequests(limit.retryAfter, "Te veel pogingen. Probeer het zo weer.");
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const decision = (body as { decision?: unknown }).decision;
   if (decision !== "accept" && decision !== "reject") {
-    return NextResponse.json({ error: "Unknown decision." }, { status: 400 });
+    return NextResponse.json({ error: "Onbekende beslissing." }, { status: 400 });
   }
 
   const { token } = await ctx.params;

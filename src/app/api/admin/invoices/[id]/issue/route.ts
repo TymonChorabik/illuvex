@@ -23,7 +23,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/admin/invoi
   if (!result.ok) {
     return NextResponse.json(
       { error: result.error },
-      { status: result.error.includes("not found") ? 404 : 409 },
+      { status: result.error.includes("niet gevonden") ? 404 : 409 },
     );
   }
   return NextResponse.json({ invoice: result.invoice });

@@ -12,10 +12,10 @@ export const ORDER_STATUSES: OrderStatus[] = [
 ];
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: "Awaiting reply",
-  confirmed: "Confirmed",
-  "in-progress": "In progress",
-  complete: "Complete",
+  pending: "Wacht op reactie",
+  confirmed: "Bevestigd",
+  "in-progress": "In behandeling",
+  complete: "Afgerond",
 };
 
 export const STATUS_STYLES: Record<OrderStatus, string> = {

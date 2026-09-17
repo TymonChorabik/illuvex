@@ -16,7 +16,7 @@ export async function GET(
   const { id } = await ctx.params;
   const quote = await getQuote(await getTenantId(), id);
   if (!quote) {
-    return NextResponse.json({ error: "Quote not found." }, { status: 404 });
+    return NextResponse.json({ error: "Offerte niet gevonden." }, { status: 404 });
   }
   return NextResponse.json({ quote });
 }
@@ -34,7 +34,7 @@ export async function PATCH(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
 
   const parsed = parseQuoteBody(body, { requireClient: false });
@@ -52,7 +52,7 @@ export async function PATCH(
 
   if (!result.ok) {
     // "Not found" is a 404; "already sent" is a conflict, not a bad request.
-    const status = result.error.includes("not found") ? 404 : 409;
+    const status = result.error.includes("niet gevonden") ? 404 : 409;
     return NextResponse.json({ error: result.error }, { status });
   }
   return NextResponse.json({ quote: result.quote });

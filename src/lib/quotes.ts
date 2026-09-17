@@ -187,11 +187,11 @@ export async function updateQuote(
     where: { id, tenantId },
     select: { id: true, status: true },
   });
-  if (!quote) return { ok: false as const, error: "Quote not found." };
+  if (!quote) return { ok: false as const, error: "Offerte niet gevonden." };
   if (quote.status !== "DRAFT") {
     return {
       ok: false as const,
-      error: "Only draft quotes can be edited. Duplicate it instead.",
+      error: "Alleen conceptofferten kunnen worden bewerkt. Dupliceer hem in plaats daarvan.",
     };
   }
 
@@ -249,9 +249,9 @@ export async function sendQuote(tenantId: string, id: string) {
     where: { id, tenantId },
     select: { id: true, status: true },
   });
-  if (!quote) return { ok: false as const, error: "Quote not found." };
+  if (!quote) return { ok: false as const, error: "Offerte niet gevonden." };
   if (quote.status !== "DRAFT") {
-    return { ok: false as const, error: "This quote has already been sent." };
+    return { ok: false as const, error: "Deze offerte is al verstuurd." };
   }
 
   const token = crypto.randomBytes(32).toString("base64url");
@@ -305,7 +305,7 @@ export type Decision = "accept" | "reject";
 export async function decideQuote(token: string, decision: Decision) {
   const quote = await getQuoteByToken(token);
   if (!quote) {
-    return { ok: false as const, error: "This link is not valid any more." };
+    return { ok: false as const, error: "Deze link is niet meer geldig." };
   }
 
   const target: QuoteStatus = decision === "accept" ? "ACCEPTED" : "REJECTED";
@@ -316,14 +316,14 @@ export async function decideQuote(token: string, decision: Decision) {
   if (quote.status === "ACCEPTED" || quote.status === "REJECTED") {
     return {
       ok: false as const,
-      error: "A decision has already been recorded for this quote.",
+      error: "Er is al een beslissing geregistreerd voor deze offerte.",
     };
   }
   if (quote.status === "EXPIRED") {
-    return { ok: false as const, error: "This quote has expired." };
+    return { ok: false as const, error: "Deze offerte is verlopen." };
   }
   if (quote.status !== "SENT") {
-    return { ok: false as const, error: "This quote is not open for a decision." };
+    return { ok: false as const, error: "Er kan geen beslissing meer worden genomen over deze offerte." };
   }
 
   if (quote.validUntil && quote.validUntil < new Date()) {
@@ -333,7 +333,7 @@ export async function decideQuote(token: string, decision: Decision) {
     });
     return {
       ok: false as const,
-      error: "This quote expired before a decision was recorded.",
+      error: "Deze offerte is verlopen voordat er een beslissing werd geregistreerd.",
     };
   }
 
@@ -346,7 +346,7 @@ export async function decideQuote(token: string, decision: Decision) {
   if (count === 0) {
     return {
       ok: false as const,
-      error: "A decision has already been recorded for this quote.",
+      error: "Er is al een beslissing geregistreerd voor deze offerte.",
     };
   }
 

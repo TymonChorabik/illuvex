@@ -53,7 +53,7 @@ export async function signIn(
   password: string,
   meta: { ip: string | null; userAgent: string | null },
 ): Promise<SignInResult> {
-  const generic = "Email or password is incorrect.";
+  const generic = "E-mailadres of wachtwoord is onjuist.";
   const normalised = email.trim().toLowerCase();
 
   const user = await prisma.user.findUnique({
@@ -68,7 +68,7 @@ export async function signIn(
   }
 
   if (user.disabledAt) {
-    return { ok: false, error: "This account has been disabled." };
+    return { ok: false, error: "Dit account is uitgeschakeld." };
   }
 
   if (user.lockedUntil && user.lockedUntil > new Date()) {
@@ -77,7 +77,7 @@ export async function signIn(
     );
     return {
       ok: false,
-      error: `Too many failed attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+      error: `Te veel mislukte pogingen. Probeer het over ${minutes} minu${minutes === 1 ? "uut" : "ten"} opnieuw.`,
     };
   }
 
@@ -203,9 +203,9 @@ export async function requireStaff(): Promise<
   { ok: true; user: SessionUser } | { ok: false; status: number; error: string }
 > {
   const user = await getSessionUser();
-  if (!user) return { ok: false, status: 401, error: "Not signed in." };
+  if (!user) return { ok: false, status: 401, error: "Niet ingelogd." };
   if (!isStaff(user)) {
-    return { ok: false, status: 403, error: "You don't have access to this." };
+    return { ok: false, status: 403, error: "Je hebt hier geen toegang toe." };
   }
   return { ok: true, user };
 }
@@ -224,15 +224,15 @@ export async function requireCustomer(): Promise<
   | { ok: false; status: number; error: string }
 > {
   const user = await getSessionUser();
-  if (!user) return { ok: false, status: 401, error: "Not signed in." };
+  if (!user) return { ok: false, status: 401, error: "Niet ingelogd." };
   if (user.role !== "CUSTOMER") {
-    return { ok: false, status: 403, error: "This area is for clients." };
+    return { ok: false, status: 403, error: "Dit gedeelte is voor klanten." };
   }
   if (!user.clientId) {
     return {
       ok: false,
       status: 403,
-      error: "This account is not linked to a client record yet.",
+      error: "Dit account is nog niet gekoppeld aan een klantgegeven.",
     };
   }
   return { ok: true, user: { ...user, clientId: user.clientId } };

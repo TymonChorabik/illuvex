@@ -19,12 +19,12 @@ export async function GET(
   // of the finger shouldn't be able to spin up ten browsers.
   const limit = rateLimit(clientKey(request, "invoice-pdf"), 10, 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many PDF downloads. Slow down.");
+    return tooManyRequests(limit.retryAfter, "Te veel PDF-downloads. Rustig aan.");
   }
 
   const { id } = await ctx.params;
   const invoice = await getInvoice(await getTenantId(), id);
-  if (!invoice) return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
+  if (!invoice) return NextResponse.json({ error: "Factuur niet gevonden." }, { status: 404 });
 
   const origin = process.env.PUBLIC_URL ?? new URL(request.url).origin;
   const target = `${origin}/admin/invoices/${id}`;
@@ -45,7 +45,7 @@ export async function GET(
     }
     console.error("[invoice-pdf] render failed:", error);
     return NextResponse.json(
-      { error: "Could not generate the PDF. Try Print → Save as PDF instead." },
+      { error: "De PDF kon niet worden gegenereerd. Probeer Afdrukken → Opslaan als PDF." },
       { status: 500 },
     );
   }

@@ -23,20 +23,20 @@ export async function PATCH(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
 
   const { id, status } = body as { id?: unknown; status?: unknown };
   if (typeof id !== "string" || !id || id.length > 100) {
-    return NextResponse.json({ error: "Missing order id." }, { status: 400 });
+    return NextResponse.json({ error: "Aanvraag-id ontbreekt." }, { status: 400 });
   }
   if (!isOrderStatus(status)) {
-    return NextResponse.json({ error: "Unknown status." }, { status: 400 });
+    return NextResponse.json({ error: "Onbekende status." }, { status: 400 });
   }
 
   const order = await updateOrderStatus(id, status);
   if (!order) {
-    return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    return NextResponse.json({ error: "Aanvraag niet gevonden." }, { status: 404 });
   }
   return NextResponse.json({ order });
 }

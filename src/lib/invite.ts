@@ -39,7 +39,7 @@ export async function inviteClientUser(
     where: { id: clientId, tenantId },
     select: { id: true, email: true, contactName: true, name: true },
   });
-  if (!client) return { ok: false, error: "Client not found." };
+  if (!client) return { ok: false, error: "Klant niet gevonden." };
 
   const email = client.email.trim().toLowerCase();
 
@@ -56,13 +56,13 @@ export async function inviteClientUser(
     if (existing.role !== "CUSTOMER") {
       return {
         ok: false,
-        error: "That email already belongs to a staff account.",
+        error: "Dit e-mailadres hoort al bij een medewerkersaccount.",
       };
     }
     if (existing.clientId && existing.clientId !== clientId) {
       return {
         ok: false,
-        error: "That email is already linked to a different client.",
+        error: "Dit e-mailadres is al gekoppeld aan een andere klant.",
       };
     }
     userId = existing.id;
@@ -111,7 +111,7 @@ export type TokenCheck =
 
 export async function checkInviteToken(token: string): Promise<TokenCheck> {
   if (!token || token.length > 200) {
-    return { ok: false, error: "This link is not valid." };
+    return { ok: false, error: "Deze link is niet geldig." };
   }
 
   const record = await prisma.verificationToken.findUnique({
@@ -120,16 +120,16 @@ export async function checkInviteToken(token: string): Promise<TokenCheck> {
   });
 
   if (!record || record.purpose !== "PASSWORD_RESET") {
-    return { ok: false, error: "This link is not valid." };
+    return { ok: false, error: "Deze link is niet geldig." };
   }
   if (record.usedAt) {
-    return { ok: false, error: "This link has already been used." };
+    return { ok: false, error: "Deze link is al gebruikt." };
   }
   if (record.expiresAt <= new Date()) {
-    return { ok: false, error: "This link has expired. Ask us for a new one." };
+    return { ok: false, error: "Deze link is verlopen. Vraag ons om een nieuwe." };
   }
   if (record.user.disabledAt) {
-    return { ok: false, error: "This account is disabled." };
+    return { ok: false, error: "Dit account is uitgeschakeld." };
   }
 
   return {
@@ -157,7 +157,7 @@ export async function setPasswordWithToken(token: string, password: string) {
       where: { tokenHash, usedAt: null },
       data: { usedAt: new Date() },
     });
-    if (count === 0) return { ok: false as const, error: "This link has already been used." };
+    if (count === 0) return { ok: false as const, error: "Deze link is al gebruikt." };
 
     await tx.user.update({
       where: { id: check.userId },

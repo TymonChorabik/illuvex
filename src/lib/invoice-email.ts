@@ -36,7 +36,7 @@ export async function sendInvoiceEmail(
   const currency = invoice.currency;
   const greeting = invoice.client.contactName ?? invoice.client.name;
   const due = invoice.dueAt
-    ? invoice.dueAt.toLocaleDateString("en-GB", {
+    ? invoice.dueAt.toLocaleDateString("nl-NL", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -52,45 +52,45 @@ export async function sendInvoiceEmail(
         <div style="font-size:13px;color:#a8a29e;margin-top:2px">Factuur ${escapeHtml(invoice.number)}</div>
       </div>
       <div style="padding:28px">
-        <h1 style="margin:0 0 8px;font-size:20px;color:#1c1917">Invoice ${escapeHtml(invoice.number)}</h1>
+        <h1 style="margin:0 0 8px;font-size:20px;color:#1c1917">Factuur ${escapeHtml(invoice.number)}</h1>
         <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#57534e">
-          Hi ${escapeHtml(greeting)}, please find attached invoice
-          <strong>${escapeHtml(invoice.number)}</strong> for
-          <strong>${escapeHtml(total)}</strong>${due ? `, due ${escapeHtml(due)}` : ""}.
+          Hoi ${escapeHtml(greeting)}, hierbij factuur
+          <strong>${escapeHtml(invoice.number)}</strong> ter waarde van
+          <strong>${escapeHtml(total)}</strong>${due ? `, te betalen vóór ${escapeHtml(due)}` : ""}.
         </p>
         <table style="width:100%;border-collapse:collapse;margin-bottom:22px;font-size:14px">
-          <tr><td style="padding:6px 0;color:#78716c">Invoice</td>
+          <tr><td style="padding:6px 0;color:#78716c">Factuur</td>
               <td style="padding:6px 0;text-align:right;color:#1c1917">${escapeHtml(invoice.number)}</td></tr>
           ${
             due
-              ? `<tr><td style="padding:6px 0;color:#78716c">Due</td>
+              ? `<tr><td style="padding:6px 0;color:#78716c">Vervaldatum</td>
                      <td style="padding:6px 0;text-align:right;color:#1c1917">${escapeHtml(due)}</td></tr>`
               : ""
           }
-          <tr><td style="padding:10px 0 0;font-weight:700;color:#1c1917;border-top:2px solid #0b1440">Total</td>
+          <tr><td style="padding:10px 0 0;font-weight:700;color:#1c1917;border-top:2px solid #0b1440">Totaal</td>
               <td style="padding:10px 0 0;text-align:right;font-weight:700;color:#1c1917;border-top:2px solid #0b1440">${escapeHtml(total)}</td></tr>
         </table>
         <p style="margin:0;font-size:13px;line-height:1.6;color:#78716c">
-          Full details are in the attached PDF. Questions? Just reply to this email.
+          Volledige details staan in de bijgevoegde PDF. Vragen? Antwoord gewoon op deze e-mail.
         </p>
       </div>
     </div>
   </div>`;
 
   const text = [
-    `${SITE.name} — Invoice ${invoice.number}`,
+    `${SITE.name} — Factuur ${invoice.number}`,
     ``,
-    `Total: ${total}`,
-    due ? `Due: ${due}` : ``,
+    `Totaal: ${total}`,
+    due ? `Vervaldatum: ${due}` : ``,
     ``,
-    `Full details are in the attached PDF. Questions? Just reply to this email.`,
+    `Volledige details staan in de bijgevoegde PDF. Vragen? Antwoord gewoon op deze e-mail.`,
   ]
     .filter(Boolean)
     .join("\n");
 
   if (!resend) {
     console.warn(
-      `[invoice-email] RESEND_API_KEY not set — invoice ${invoice.number} was not emailed.`,
+      `[invoice-email] RESEND_API_KEY niet ingesteld — factuur ${invoice.number} is niet gemaild.`,
     );
     return { sent: false, reason: "RESEND_API_KEY is not configured" };
   }
@@ -100,7 +100,7 @@ export async function sendInvoiceEmail(
       from: SITE.fromEmail,
       to: invoice.client.email,
       replyTo: SITE.businessEmail,
-      subject: `${SITE.name}: invoice ${invoice.number} — ${total}`,
+      subject: `${SITE.name}: factuur ${invoice.number} — ${total}`,
       html,
       text,
       attachments: [

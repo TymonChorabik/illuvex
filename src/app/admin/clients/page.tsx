@@ -35,12 +35,12 @@ export default function ClientsPage() {
           router.push("/admin");
           return;
         }
-        setError(data.error ?? "Could not load clients.");
+        setError(data.error ?? "Kon klanten niet laden.");
         return;
       }
       setClients(data.clients as Client[]);
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function ClientsPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not send the invite.");
+        setError(data.error ?? "Kon de uitnodiging niet versturen.");
         return;
       }
       setLastInvite({ id, link: data.link });
@@ -69,11 +69,11 @@ export default function ClientsPage() {
       await load();
       if (!data.emailSent) {
         setError(
-          `Invite created, but the email did not go out (${data.emailError}). Copy the link below and send it yourself.`,
+          `Uitnodiging aangemaakt, maar de e-mail ging niet door (${data.emailError}). Kopieer de link hieronder en stuur hem zelf.`,
         );
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setInvitingId(null);
     }
@@ -84,9 +84,9 @@ export default function ClientsPage() {
       <AdminNav />
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Clients</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Klanten</h1>
           <p className="mt-1.5 text-sm text-muted">
-            Invite a client and they can sign in to see their invoices.
+            Nodig een klant uit en die kan inloggen om hun facturen te zien.
           </p>
         </div>
       </div>
@@ -97,14 +97,14 @@ export default function ClientsPage() {
         </p>
       )}
 
-      {loading && !clients && <p className="mt-8 text-sm text-muted">Loading...</p>}
+      {loading && !clients && <p className="mt-8 text-sm text-muted">Laden...</p>}
 
       {clients && clients.length === 0 && (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No clients yet.</p>
+          <p className="font-medium">Nog geen klanten.</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-            A client record is created the first time you raise a quote for
-            someone.
+            Een klantrecord wordt aangemaakt zodra je voor het eerst een
+            offerte voor iemand opstelt.
           </p>
         </div>
       )}
@@ -133,7 +133,7 @@ export default function ClientsPage() {
                               : "bg-accent-soft text-accent"
                           }`}
                         >
-                          {activated ? "Portal active" : "Invite pending"}
+                          {activated ? "Portal actief" : "Uitnodiging in behandeling"}
                         </span>
                       )}
                     </div>
@@ -143,8 +143,8 @@ export default function ClientsPage() {
                       {client.city ? ` · ${client.city}` : ""}
                     </p>
                     <p className="mt-1 text-xs text-muted">
-                      {client._count.quotes} quote
-                      {client._count.quotes === 1 ? "" : "s"}
+                      {client._count.quotes}{" "}
+                      {client._count.quotes === 1 ? "offerte" : "offertes"}
                     </p>
                   </div>
 
@@ -155,17 +155,17 @@ export default function ClientsPage() {
                     className="shrink-0 rounded-lg border border-line px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-subtle disabled:opacity-55"
                   >
                     {invitingId === client.id
-                      ? "Sending..."
+                      ? "Versturen..."
                       : account
-                        ? "Resend invite"
-                        : "Invite to portal"}
+                        ? "Uitnodiging opnieuw sturen"
+                        : "Uitnodigen voor portal"}
                   </button>
                 </div>
 
                 {lastInvite?.id === client.id && (
                   <div className="mt-3 rounded-lg bg-subtle px-3 py-2">
                     <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                      Set-password link
+                      Link om wachtwoord in te stellen
                     </p>
                     <p className="mt-1 break-all font-mono text-xs">
                       {lastInvite.link}

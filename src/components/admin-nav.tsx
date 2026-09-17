@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { href: "/admin", label: "Requests" },
+  { href: "/admin", label: "Aanvragen" },
   { href: "/admin/quotes", label: "Offertes" },
   { href: "/admin/invoices", label: "Facturen" },
-  { href: "/admin/clients", label: "Clients" },
+  { href: "/admin/clients", label: "Klanten" },
 ] as const;
 
 /**
@@ -60,7 +60,7 @@ export function AdminNav() {
         onClick={() => void signOut()}
         className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:bg-subtle hover:text-ink"
       >
-        Sign out
+        Uitloggen
       </button>
     </div>
   );

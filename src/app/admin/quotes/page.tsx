@@ -21,11 +21,11 @@ type QuoteRow = {
 };
 
 const STATUS_LABELS: Record<QuoteRow["status"], string> = {
-  DRAFT: "Draft",
-  SENT: "Awaiting decision",
-  ACCEPTED: "Accepted",
-  REJECTED: "Declined",
-  EXPIRED: "Expired",
+  DRAFT: "Concept",
+  SENT: "Wacht op beslissing",
+  ACCEPTED: "Geaccepteerd",
+  REJECTED: "Afgewezen",
+  EXPIRED: "Verlopen",
 };
 
 const STATUS_STYLES: Record<QuoteRow["status"], string> = {
@@ -69,7 +69,7 @@ export default function QuotesPage() {
           router.push("/admin");
           return;
         }
-        setError(data.error ?? "Could not load quotes.");
+        setError(data.error ?? "Kon offertes niet laden.");
         setQuotes(null);
         return;
       }
@@ -85,7 +85,7 @@ export default function QuotesPage() {
         setInvoiceIdByQuote((prev) => ({ ...prev, ...Object.fromEntries(known) }));
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ export default function QuotesPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not send.");
+        setError(data.error ?? "Kon niet versturen.");
         return;
       }
       // Surfaced so staff can copy the link while email is unconfigured.
@@ -117,11 +117,11 @@ export default function QuotesPage() {
       await load(filter);
       if (!data.emailSent) {
         setError(
-          `Quote marked as sent, but the email did not go out (${data.emailError}). Copy the link below and send it yourself.`,
+          `Offerte gemarkeerd als verstuurd, maar de e-mail ging niet door (${data.emailError}). Kopieer de link hieronder en stuur hem zelf.`,
         );
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setSendingId(null);
     }
@@ -138,12 +138,12 @@ export default function QuotesPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not create the invoice.");
+        setError(data.error ?? "Kon de factuur niet aanmaken.");
         return;
       }
       setInvoiceIdByQuote((prev) => ({ ...prev, [id]: data.invoice.id }));
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setInvoicingId(null);
     }
@@ -156,7 +156,7 @@ export default function QuotesPage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Offertes</h1>
           <p className="mt-1.5 text-sm text-muted">
-            Quotes you have raised, and where each one stands.
+            Offertes die je hebt opgesteld, en de status van elk.
           </p>
         </div>
         <div className="flex gap-2">
@@ -164,7 +164,7 @@ export default function QuotesPage() {
             href="/admin/quotes/new"
             className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
           >
-            New quote
+            Nieuwe offerte
           </Link>
         </div>
       </div>
@@ -181,7 +181,7 @@ export default function QuotesPage() {
                 : "border border-line text-muted hover:bg-subtle hover:text-ink"
             }`}
           >
-            {option === "ALL" ? "All" : STATUS_LABELS[option]}
+            {option === "ALL" ? "Alle" : STATUS_LABELS[option]}
           </button>
         ))}
       </div>
@@ -193,15 +193,16 @@ export default function QuotesPage() {
       )}
 
       {loading && !quotes && (
-        <p className="mt-8 text-sm text-muted">Loading...</p>
+        <p className="mt-8 text-sm text-muted">Laden...</p>
       )}
 
       {quotes && quotes.length === 0 && (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No quotes here yet.</p>
+          <p className="font-medium">Nog geen offertes.</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-            Raise one with the New quote button — the client gets a link they
-            can accept or decline without needing an account.
+            Maak er een aan met de knop Nieuwe offerte — de klant krijgt een
+            link waarmee die kan accepteren of afwijzen, zonder account nodig
+            te hebben.
           </p>
         </div>
       )}
@@ -245,7 +246,7 @@ export default function QuotesPage() {
                       onClick={() => void send(quote.id)}
                       className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
                     >
-                      {sendingId === quote.id ? "Sending..." : "Send to client"}
+                      {sendingId === quote.id ? "Versturen..." : "Versturen naar klant"}
                     </button>
                   )}
                   {quote.status === "ACCEPTED" &&
@@ -254,7 +255,7 @@ export default function QuotesPage() {
                         href={`/admin/invoices/${invoiceIdByQuote[quote.id]}`}
                         className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
                       >
-                        View invoice
+                        Factuur bekijken
                       </Link>
                     ) : (
                       <button
@@ -264,8 +265,8 @@ export default function QuotesPage() {
                         className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
                       >
                         {invoicingId === quote.id
-                          ? "Creating..."
-                          : "Create invoice"}
+                          ? "Aanmaken..."
+                          : "Factuur aanmaken"}
                       </button>
                     ))}
                 </div>
@@ -274,7 +275,7 @@ export default function QuotesPage() {
               {lastLink?.id === quote.id && (
                 <div className="mt-3 rounded-lg bg-subtle px-3 py-2">
                   <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                    Client link
+                    Link voor klant
                   </p>
                   <p className="mt-1 break-all font-mono text-xs">
                     {lastLink.link}
@@ -284,12 +285,12 @@ export default function QuotesPage() {
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
                 <span>
-                  {quote._count.lines} line
-                  {quote._count.lines === 1 ? "" : "s"}
+                  {quote._count.lines}{" "}
+                  {quote._count.lines === 1 ? "regel" : "regels"}
                 </span>
                 <span>
-                  Raised{" "}
-                  {new Date(quote.createdAt).toLocaleDateString("en-GB", {
+                  Opgesteld{" "}
+                  {new Date(quote.createdAt).toLocaleDateString("nl-NL", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -297,8 +298,8 @@ export default function QuotesPage() {
                 </span>
                 {quote.validUntil && (
                   <span>
-                    Valid until{" "}
-                    {new Date(quote.validUntil).toLocaleDateString("en-GB", {
+                    Geldig tot{" "}
+                    {new Date(quote.validUntil).toLocaleDateString("nl-NL", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",

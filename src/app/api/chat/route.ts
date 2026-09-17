@@ -12,31 +12,31 @@ function buildCatalog() {
     const features = offer.features.map((f) => FEATURE_LABELS[f]).join(", ");
     return [
       `## ${offer.name} — ${formatPrice(offer.price, offer.priceUnit)}`,
-      `Category: ${CATEGORY_LABELS[offer.category]} | Turnaround: ${offer.timelineLabel}`,
-      `Best for: ${offer.summary}`,
-      `Covers: ${features}`,
-      `Includes: ${offer.includes.join("; ")}`,
+      `Categorie: ${CATEGORY_LABELS[offer.category]} | Doorlooptijd: ${offer.timelineLabel}`,
+      `Geschikt voor: ${offer.summary}`,
+      `Omvat: ${features}`,
+      `Inbegrepen: ${offer.includes.join("; ")}`,
     ].join("\n");
   }).join("\n\n");
 }
 
-const SYSTEM_PROMPT = `You are the assistant on the website of ${SITE.name}, a web design studio that builds websites for small businesses. You help visitors work out which package fits them and answer questions about the work.
+const SYSTEM_PROMPT = `Je bent de assistent op de website van ${SITE.name}, een webdesignstudio die websites bouwt voor kleine bedrijven. Je helpt bezoekers uitzoeken welk pakket bij hen past en beantwoordt vragen over het werk. Antwoord altijd in het Nederlands.
 
-# Our packages
+# Onze pakketten
 ${buildCatalog()}
 
-# How to help
-Ask about the visitor's business, what they need the site to do, their budget, and their deadline — then recommend a specific package by name and say why it fits. One or two clarifying questions at a time, not a questionnaire.
+# Hoe je helpt
+Vraag naar het bedrijf van de bezoeker, wat de site moet doen, hun budget en hun deadline — beveel dan een specifiek pakket aan bij naam en leg uit waarom het past. Eén of twee verduidelijkende vragen tegelijk, geen vragenlijst.
 
-If someone is between two packages, say which you'd pick and give the honest tradeoff. If nothing fits — an unusual budget, a bespoke build, an existing site with problems you can't diagnose from a chat — say so and point them at ${SITE.businessEmail}.
+Twijfelt iemand tussen twee pakketten, zeg dan welke jij zou kiezen en geef de eerlijke afweging. Past niets — een ongebruikelijk budget, maatwerk, een bestaande site met problemen die je niet vanuit een chat kunt beoordelen — zeg dat dan en verwijs naar ${SITE.businessEmail}.
 
-To order, visitors click "Request this package" on any card here; that sends a confirmation email straight away. Nothing is charged at that point. They can look up past requests under Transactions in the navbar, using the email they ordered with.
+Om een offerte aan te vragen klikt een bezoeker op "Offerte op maat aanvragen" op de homepage; daarna nemen we binnen één werkdag contact op. Er wordt op dat moment niets in rekening gebracht. Eerdere aanvragen zijn terug te vinden onder Transacties in de navigatiebalk, met het e-mailadres waarmee is aangevraagd.
 
-# Boundaries
-Prices, turnaround times, and inclusions above are the complete and current list — never invent a package, a discount, a price, or a delivery date. You cannot place an order, change one, look up someone's order history, or take payment details; direct them to the buttons on the page or to ${SITE.businessEmail}. Never ask for card numbers or passwords.
+# Grenzen
+Prijzen, doorlooptijden en inbegrepen zaken hierboven zijn de volledige en actuele lijst — verzin nooit een pakket, korting, prijs of levertermijn. Je kunt geen offerte aanvragen, wijzigen, iemands aanvraaggeschiedenis opzoeken of betaalgegevens verwerken; verwijs naar de knop op de pagina of naar ${SITE.businessEmail}. Vraag nooit om kaartnummers of wachtwoorden.
 
-# Style
-Keep responses short — a few sentences, the length of a real chat message. Lead with the answer, then the reason. Plain language, no bullet-point walls, no marketing copy. If you don't know something, say so.`;
+# Stijl
+Houd antwoorden kort — een paar zinnen, de lengte van een echt chatbericht. Begin met het antwoord, dan de reden. Gewone taal, geen opsommingsmuren, geen marketingtaal. Weet je iets niet, zeg dat dan.`;
 
 export async function POST(request: Request) {
   // Every call costs money; cap it well below what a person could type.
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   if (!limit.allowed) {
     return tooManyRequests(
       limit.retryAfter,
-      "You have sent a lot of messages. Give it a minute.",
+      "Je hebt veel berichten verstuurd. Wacht een minuutje.",
     );
   }
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "The chat assistant isn't configured yet — add ANTHROPIC_API_KEY to .env.local.",
+          "De chatassistent is nog niet ingesteld — voeg ANTHROPIC_API_KEY toe aan .env.local.",
       },
       { status: 503 },
     );
@@ -62,12 +62,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
 
   const incoming = (body as { messages?: unknown }).messages;
   if (!Array.isArray(incoming) || incoming.length === 0) {
-    return NextResponse.json({ error: "No messages provided." }, { status: 400 });
+    return NextResponse.json({ error: "Geen berichten opgegeven." }, { status: 400 });
   }
 
   const messages: Anthropic.MessageParam[] = incoming
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
 
   if (messages.length === 0 || messages[0].role !== "user") {
     return NextResponse.json(
-      { error: "Conversation must start with a user message." },
+      { error: "Een gesprek moet beginnen met een bericht van de gebruiker." },
       { status: 400 },
     );
   }
@@ -156,8 +156,8 @@ export async function POST(request: Request) {
         if (stopReason === "refusal") {
           controller.enqueue(
             encoder.encode(
-              "\n\nSorry — I can't help with that one. Email " +
-                `${SITE.businessEmail} and a person will pick it up.`,
+              "\n\nSorry, daar kan ik niet mee helpen. Mail " +
+                `${SITE.businessEmail} en iemand pakt het op.`,
             ),
           );
         }
@@ -166,7 +166,7 @@ export async function POST(request: Request) {
         controller.enqueue(
           encoder.encode(
             (emitted > 0 ? "\n\n" : "") +
-              "Something went wrong on our end. Try again in a moment, or email " +
+              "Er ging iets mis aan onze kant. Probeer het zo nog eens, of mail " +
               `${SITE.businessEmail}.`,
           ),
         );

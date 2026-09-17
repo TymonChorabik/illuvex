@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="nl"
       className={`${inter.variable} ${manrope.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
@@ -51,7 +51,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {SITE.phone && <span>{SITE.phone}</span>}
             {SITE.location && <span>{SITE.location}</span>}
             <span className="ml-auto">
-              Prices are estimates — final quotes are confirmed by email.
+              Prijzen zijn indicatief — definitieve offertes worden per e-mail
+              bevestigd.
             </span>
           </div>
         </footer>

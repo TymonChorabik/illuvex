@@ -32,11 +32,11 @@ type Summary = {
 };
 
 const STATUS_LABELS: Record<InvoiceRow["status"], string> = {
-  DRAFT: "Draft",
-  SENT: "Awaiting payment",
-  PAID: "Paid",
-  OVERDUE: "Overdue",
-  CANCELLED: "Cancelled",
+  DRAFT: "Concept",
+  SENT: "Wacht op betaling",
+  PAID: "Betaald",
+  OVERDUE: "Verlopen",
+  CANCELLED: "Geannuleerd",
 };
 
 const STATUS_STYLES: Record<InvoiceRow["status"], string> = {
@@ -75,13 +75,13 @@ export default function InvoicesPage() {
             router.push("/admin");
             return;
           }
-          setError(data.error ?? "Could not load invoices.");
+          setError(data.error ?? "Kon facturen niet laden.");
           return;
         }
         setInvoices(data.invoices as InvoiceRow[]);
         setSummary(data.summary as Summary);
       } catch {
-        setError("Couldn't reach the server.");
+        setError("Kon de server niet bereiken.");
       } finally {
         setLoading(false);
       }
@@ -104,12 +104,12 @@ export default function InvoicesPage() {
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        setError(data?.error ?? "That did not work.");
+        setError(data?.error ?? "Dat is niet gelukt.");
         return;
       }
       await load(filter, year);
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setBusyId(null);
     }
@@ -124,7 +124,7 @@ export default function InvoicesPage() {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) {
-        setError(data?.error ?? "Could not send the invoice.");
+        setError(data?.error ?? "Kon de factuur niet versturen.");
         return;
       }
       // load() clears the error at its own start, so it must run before the
@@ -132,11 +132,11 @@ export default function InvoicesPage() {
       await load(filter, year);
       if (!data.emailSent) {
         setError(
-          `Couldn't email it (${data.emailError}). Download the PDF and send it yourself.`,
+          `Kon het niet mailen (${data.emailError}). Download de PDF en stuur hem zelf.`,
         );
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setSendingId(null);
     }
@@ -160,7 +160,7 @@ export default function InvoicesPage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Facturen</h1>
           <p className="mt-1.5 text-sm text-muted">
-            Invoices and the bookkeeping totals behind them.
+            Facturen en de boekhoudtotalen erachter.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -168,25 +168,25 @@ export default function InvoicesPage() {
             href={`/api/admin/invoices/export?format=invoices&year=${year}`}
             className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
           >
-            Export CSV
+            Exporteer CSV
           </a>
           <a
             href={`/api/admin/invoices/export?format=lines&year=${year}`}
             className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
           >
-            Export for BTW
+            Exporteer voor BTW
           </a>
         </div>
       </div>
 
       {summary && (
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {stat("Net (excl. BTW)", summary.netCents)}
+          {stat("Netto (excl. BTW)", summary.netCents)}
           {stat("BTW", summary.vatCents)}
-          {stat("Gross", summary.grossCents)}
-          {stat("Paid", summary.paidCents)}
+          {stat("Bruto", summary.grossCents)}
+          {stat("Betaald", summary.paidCents)}
           {stat(
-            "Outstanding",
+            "Openstaand",
             summary.outstandingCents,
             summary.overdueCents > 0 ? "text-accent" : "",
           )}
@@ -205,7 +205,7 @@ export default function InvoicesPage() {
                 : "border border-line text-muted hover:bg-subtle hover:text-ink"
             }`}
           >
-            {option === "ALL" ? "All" : STATUS_LABELS[option]}
+            {option === "ALL" ? "Alle" : STATUS_LABELS[option]}
           </button>
         ))}
         <select
@@ -230,13 +230,14 @@ export default function InvoicesPage() {
         </p>
       )}
 
-      {loading && !invoices && <p className="mt-8 text-sm text-muted">Loading...</p>}
+      {loading && !invoices && <p className="mt-8 text-sm text-muted">Laden...</p>}
 
       {invoices && invoices.length === 0 && (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No invoices here.</p>
+          <p className="font-medium">Nog geen facturen.</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-            Accept a quote and turn it into an invoice from the Offertes page.
+            Accepteer een offerte en maak er een factuur van vanaf de
+            Offertes-pagina.
           </p>
         </div>
       )}
@@ -251,7 +252,7 @@ export default function InvoicesPage() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="font-mono font-semibold tracking-tight">
-                        {invoice.number ?? "Draft"}
+                        {invoice.number ?? "Concept"}
                       </h2>
                       <span
                         className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLES[invoice.status]}`}
@@ -265,12 +266,12 @@ export default function InvoicesPage() {
                     </p>
                     <p className="mt-1 text-xs text-muted">
                       {invoice.issuedAt
-                        ? `Issued ${new Date(invoice.issuedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
-                        : "Not issued yet"}
+                        ? `Uitgegeven ${new Date(invoice.issuedAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}`
+                        : "Nog niet uitgegeven"}
                       {invoice.dueAt &&
-                        ` · due ${new Date(invoice.dueAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
+                        ` · vervalt ${new Date(invoice.dueAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}`}
                       {invoice.emailSentAt &&
-                        ` · emailed ${new Date(invoice.emailSentAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
+                        ` · gemaild ${new Date(invoice.emailSentAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}`}
                     </p>
                   </div>
 
@@ -280,7 +281,7 @@ export default function InvoicesPage() {
                     </span>
                     {outstanding > 0 && invoice.status !== "DRAFT" && (
                       <span className="text-xs text-muted">
-                        {formatMoney(outstanding, invoice.currency)} outstanding
+                        {formatMoney(outstanding, invoice.currency)} openstaand
                       </span>
                     )}
                     <div className="flex flex-wrap justify-end gap-2">
@@ -288,7 +289,7 @@ export default function InvoicesPage() {
                         href={`/admin/invoices/${invoice.id}`}
                         className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
                       >
-                        View
+                        Bekijken
                       </Link>
                       {invoice.status !== "DRAFT" && (
                         <>
@@ -306,10 +307,10 @@ export default function InvoicesPage() {
                             className="btn-gradient rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
                           >
                             {sendingId === invoice.id
-                              ? "Sending..."
+                              ? "Versturen..."
                               : invoice.emailSentAt
-                                ? "Resend"
-                                : "Send"}
+                                ? "Opnieuw versturen"
+                                : "Versturen"}
                           </button>
                         </>
                       )}
@@ -320,7 +321,7 @@ export default function InvoicesPage() {
                           onClick={() => void act(invoice.id, "/issue")}
                           className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
                         >
-                          {busyId === invoice.id ? "Issuing..." : "Issue"}
+                          {busyId === invoice.id ? "Uitgeven..." : "Uitgeven"}
                         </button>
                       )}
                       {outstanding > 0 &&
@@ -335,7 +336,7 @@ export default function InvoicesPage() {
                             }
                             className="rounded-lg bg-ink px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
                           >
-                            Mark paid
+                            Markeer als betaald
                           </button>
                         )}
                     </div>

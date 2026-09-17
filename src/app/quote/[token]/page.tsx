@@ -8,18 +8,18 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   // A quote is private: never let it reach a search index.
   robots: { index: false, follow: false },
-  title: `Your quote — ${SITE.name}`,
+  title: `Jouw offerte — ${SITE.name}`,
 };
 
 const STATUS_NOTE: Record<string, { label: string; tone: string }> = {
   ACCEPTED: {
-    label: "You accepted this quote.",
+    label: "Je hebt deze offerte geaccepteerd.",
     tone: "bg-accent-soft text-accent",
   },
-  REJECTED: { label: "You declined this quote.", tone: "bg-subtle text-muted" },
-  EXPIRED: { label: "This quote has expired.", tone: "bg-subtle text-muted" },
+  REJECTED: { label: "Je hebt deze offerte afgewezen.", tone: "bg-subtle text-muted" },
+  EXPIRED: { label: "Deze offerte is verlopen.", tone: "bg-subtle text-muted" },
   DRAFT: {
-    label: "This quote is not ready yet.",
+    label: "Deze offerte is nog niet klaar.",
     tone: "bg-subtle text-muted",
   },
 };
@@ -38,7 +38,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
   return (
     <div className="mx-auto max-w-2xl px-5 py-12">
       <p className="mb-3 text-xs text-muted print:hidden">
-        Use your browser&apos;s Print → Save as PDF to download this.
+        Gebruik Afdrukken → Opslaan als PDF in je browser om dit te downloaden.
       </p>
       <div className="rounded-2xl border border-line bg-surface print:rounded-none print:border-0">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-7 py-6">
@@ -52,8 +52,8 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
             <p className="mt-1 text-sm text-muted">
               {quote.validUntil && (
                 <>
-                  Valid until{" "}
-                  {quote.validUntil.toLocaleDateString("en-GB", {
+                  Geldig tot{" "}
+                  {quote.validUntil.toLocaleDateString("nl-NL", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -75,7 +75,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
         <div className="flex flex-wrap justify-between gap-6 border-b border-line px-7 py-6">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
-              For
+              Voor
             </p>
             <p className="mt-1.5 font-medium">{quote.client.name}</p>
             <p className="text-sm leading-relaxed text-muted">
@@ -116,7 +116,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
           {quote.client.number && (
             <div className="text-right text-sm text-muted">
               <p className="text-[11px] font-medium uppercase tracking-wider">
-                Client
+                Klant
               </p>
               <p className="mt-1.5">{quote.client.number}</p>
             </div>
@@ -128,11 +128,11 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-line text-left text-xs uppercase tracking-wider text-muted">
-                  <th className="pb-2 font-medium">Description</th>
-                  <th className="pb-2 text-right font-medium">Qty</th>
-                  <th className="pb-2 text-right font-medium">Unit</th>
+                  <th className="pb-2 font-medium">Omschrijving</th>
+                  <th className="pb-2 text-right font-medium">Aantal</th>
+                  <th className="pb-2 text-right font-medium">Prijs</th>
                   <th className="pb-2 text-right font-medium">BTW</th>
-                  <th className="pb-2 text-right font-medium">Amount</th>
+                  <th className="pb-2 text-right font-medium">Bedrag</th>
                 </tr>
               </thead>
               <tbody>
@@ -159,7 +159,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
 
           <div className="ml-auto mt-5 max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Subtotal</span>
+              <span className="text-muted">Subtotaal</span>
               <span className="tabular-nums">
                 {formatMoney(quote.subtotalCents, currency)}
               </span>
@@ -171,7 +171,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
               </span>
             </div>
             <div className="flex justify-between border-t-2 border-ink pt-2 text-base font-semibold">
-              <span>Total</span>
+              <span>Totaal</span>
               <span className="tabular-nums">
                 {formatMoney(quote.totalCents, currency)}
               </span>
@@ -198,7 +198,7 @@ export default async function QuotePage(props: PageProps<"/quote/[token]">) {
             </div>
           )}
           <p className="mt-4 text-xs leading-relaxed text-muted print:hidden">
-            Questions before deciding? Email{" "}
+            Vragen voordat je beslist? Mail{" "}
             <a
               href={`mailto:${SITE.businessEmail}?subject=Offerte ${quote.reference}`}
               className="font-medium text-accent hover:underline"

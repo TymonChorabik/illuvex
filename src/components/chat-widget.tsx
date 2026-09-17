@@ -6,12 +6,12 @@ import { SITE } from "@/lib/site";
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 const GREETING =
-  "Hi — I can help you pick a package. What kind of business is the site for, and what do you need it to do?";
+  "Hoi — ik help je graag het juiste pakket te kiezen. Voor wat voor bedrijf is de site, en wat moet hij kunnen?";
 
 const SUGGESTIONS = [
-  "I run a small cafe",
-  "I need to sell products online",
-  "What fits a $500 budget?",
+  "Ik heb een klein café",
+  "Ik wil producten online verkopen",
+  "Wat past bij een budget van €500?",
 ];
 
 /** Anything on the page can open the chat by firing this. */
@@ -64,7 +64,7 @@ export function ChatWidget() {
 
       if (!response.ok || !response.body) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error ?? "The assistant is unavailable.");
+        throw new Error(data?.error ?? "De assistent is niet beschikbaar.");
       }
 
       const reader = response.body.getReader();
@@ -82,7 +82,7 @@ export function ChatWidget() {
         ...history,
         {
           role: "assistant",
-          content: `${(error as Error).message} You can email ${SITE.businessEmail} instead.`,
+          content: `${(error as Error).message} Je kunt ook mailen naar ${SITE.businessEmail}.`,
         },
       ]);
     } finally {
@@ -101,7 +101,7 @@ export function ChatWidget() {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        aria-label={open ? "Close chat" : "Open chat"}
+        aria-label={open ? "Chat sluiten" : "Chat openen"}
         className="chat-widget fixed bottom-5 right-5 z-40 grid h-13 w-13 place-items-center rounded-full bg-ink p-3.5 text-white shadow-lg transition-transform hover:scale-105"
       >
         {open ? (
@@ -133,10 +133,10 @@ export function ChatWidget() {
             <span className="h-2 w-2 rounded-full bg-accent" />
             <div>
               <p className="text-sm font-semibold leading-tight">
-                {SITE.name} assistant
+                {SITE.name} assistent
               </p>
               <p className="text-[11px] text-muted">
-                Answers about packages and pricing
+                Antwoorden over pakketten en prijzen
               </p>
             </div>
           </div>
@@ -195,14 +195,14 @@ export function ChatWidget() {
               ref={inputRef}
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about a package..."
+              placeholder="Vraag iets over een pakket..."
               maxLength={2000}
               className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
             />
             <button
               type="submit"
               disabled={streaming || !input.trim()}
-              aria-label="Send message"
+              aria-label="Bericht versturen"
               className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-white transition-opacity hover:opacity-90 disabled:opacity-40"
             >
               <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">

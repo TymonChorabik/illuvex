@@ -21,16 +21,16 @@ export async function POST(
   // Same cost as a PDF download plus an outgoing email -- worth throttling.
   const limit = rateLimit(clientKey(request, "invoice-send"), 10, 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many sends. Slow down.");
+    return tooManyRequests(limit.retryAfter, "Te veel verzendingen. Rustig aan.");
   }
 
   const tenantId = await getTenantId();
   const { id } = await ctx.params;
   const invoice = await getInvoice(tenantId, id);
-  if (!invoice) return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
+  if (!invoice) return NextResponse.json({ error: "Factuur niet gevonden." }, { status: 404 });
   if (!invoice.number) {
     return NextResponse.json(
-      { error: "Issue the invoice before emailing it." },
+      { error: "Geef de factuur uit voordat je hem mailt." },
       { status: 409 },
     );
   }
@@ -47,7 +47,7 @@ export async function POST(
     }
     console.error("[invoice-send] PDF render failed:", error);
     return NextResponse.json(
-      { error: "Could not generate the PDF to attach." },
+      { error: "De PDF-bijlage kon niet worden gegenereerd." },
       { status: 500 },
     );
   }

@@ -12,14 +12,14 @@ function clientIp(request: Request) {
 export async function POST(request: Request) {
   const limit = rateLimit(clientKey(request, "portal-login"), 5, 15 * 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many sign-in attempts. Try again later.");
+    return tooManyRequests(limit.retryAfter, "Te veel inlogpogingen. Probeer het later opnieuw.");
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const { email, password } = body as { email?: unknown; password?: unknown };
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     typeof email !== "string" || typeof password !== "string" ||
     email.length > 200 || password.length > 200
   ) {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const result = await signIn(await getTenantId(), email, password, {
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   if (result.user.role !== "CUSTOMER") {
     await signOut();
     return NextResponse.json(
-      { error: "Staff accounts sign in at /admin." },
+      { error: "Medewerkersaccounts loggen in via /admin." },
       { status: 403 },
     );
   }

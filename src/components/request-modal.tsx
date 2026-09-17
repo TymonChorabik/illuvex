@@ -62,7 +62,7 @@ export function RequestModal({
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        setError(data.error ?? "Er ging iets mis. Probeer het opnieuw.");
         return;
       }
 
@@ -80,7 +80,7 @@ export function RequestModal({
         emailError: data.emailError,
       });
     } catch {
-      setError("Couldn't reach the server. Check your connection and retry.");
+      setError("Kon de server niet bereiken. Controleer je verbinding en probeer opnieuw.");
     } finally {
       setPending(false);
     }
@@ -125,23 +125,22 @@ export function RequestModal({
               id="request-title"
               className="text-lg font-semibold tracking-tight"
             >
-              Request received
+              Aanvraag ontvangen
             </h2>
             <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
               {done.emailSent ? (
                 <>
-                  A confirmation is on its way to{" "}
+                  Er is een bevestiging onderweg naar{" "}
                   <span className="font-medium text-ink">{done.email}</span>. We
-                  will reply within one working day.
+                  reageren binnen één werkdag.
                 </>
               ) : (
                 <>
-                  Your request is saved and we can see it, but the confirmation
-                  email did not go out
-                  {done.emailError ? ` (${done.emailError})` : ""}. We will
-                  follow up at{" "}
-                  <span className="font-medium text-ink">{done.email}</span>{" "}
-                  directly.
+                  Je aanvraag is opgeslagen en we hebben hem gezien, maar de
+                  bevestigingsmail ging niet door
+                  {done.emailError ? ` (${done.emailError})` : ""}. We nemen
+                  rechtstreeks contact op via{" "}
+                  <span className="font-medium text-ink">{done.email}</span>.
                 </>
               )}
             </p>
@@ -149,14 +148,14 @@ export function RequestModal({
               {done.reference}
             </p>
             <p className="mt-4 text-xs text-muted">
-              Nothing has been charged. Track it under Transactions.
+              Er is niets in rekening gebracht. Volg het onder Transacties.
             </p>
             <button
               type="button"
               onClick={onClose}
               className="mt-5 w-full rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
             >
-              Done
+              Klaar
             </button>
           </div>
         ) : (
@@ -164,24 +163,24 @@ export function RequestModal({
             <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-muted">
-                  {offer ? "Requesting" : "Custom quote"}
+                  {offer ? "Aanvraag voor" : "Offerte op maat"}
                 </p>
                 <h2
                   id="request-title"
                   className="mt-1 text-lg font-semibold tracking-tight"
                 >
-                  {offer ? offer.name : "Tell us what you need"}
+                  {offer ? offer.name : "Vertel ons wat je nodig hebt"}
                 </h2>
                 <p className="mt-0.5 text-sm text-muted">
                   {offer
                     ? `${formatPrice(offer.price, offer.priceUnit)} · ${offer.timelineLabel}`
-                    : "We'll reply with a price once we know a bit more."}
+                    : "We reageren met een prijs zodra we iets meer weten."}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close"
+                aria-label="Sluiten"
                 className="-mr-1.5 -mt-1 rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-ink"
               >
                 <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden="true">
@@ -200,7 +199,7 @@ export function RequestModal({
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className={labelClass} htmlFor="name">
-                    Your name *
+                    Je naam *
                   </label>
                   <input
                     ref={firstFieldRef}
@@ -211,12 +210,12 @@ export function RequestModal({
                     maxLength={120}
                     autoComplete="name"
                     className={field}
-                    placeholder="Your name"
+                    placeholder="Je naam"
                   />
                 </div>
                 <div>
                   <label className={labelClass} htmlFor="email">
-                    Email *
+                    E-mail *
                   </label>
                   <input
                     id="email"
@@ -225,12 +224,12 @@ export function RequestModal({
                     required
                     autoComplete="email"
                     className={field}
-                    placeholder="you@example.com"
+                    placeholder="jij@voorbeeld.nl"
                   />
                 </div>
                 <div>
                   <label className={labelClass} htmlFor="company">
-                    Business name
+                    Bedrijfsnaam
                   </label>
                   <input
                     id="company"
@@ -238,12 +237,12 @@ export function RequestModal({
                     maxLength={120}
                     autoComplete="organization"
                     className={field}
-                    placeholder="Your business"
+                    placeholder="Je bedrijf"
                   />
                 </div>
                 <div>
                   <label className={labelClass} htmlFor="phone">
-                    Phone
+                    Telefoon
                   </label>
                   <input
                     id="phone"
@@ -252,14 +251,14 @@ export function RequestModal({
                     maxLength={40}
                     autoComplete="tel"
                     className={field}
-                    placeholder="Optional"
+                    placeholder="Optioneel"
                   />
                 </div>
               </div>
 
               <div>
                 <label className={labelClass} htmlFor="notes">
-                  {offer ? "Anything we should know?" : "What do you need? *"}
+                  {offer ? "Nog iets dat we moeten weten?" : "Wat heb je nodig? *"}
                 </label>
                 <textarea
                   id="notes"
@@ -272,8 +271,8 @@ export function RequestModal({
                   className={`${field} resize-none`}
                   placeholder={
                     offer
-                      ? "Deadlines, pages you need, a site you like the look of..."
-                      : "What are you trying to build, and what's your rough budget or timeline?"
+                      ? "Deadlines, pagina's die je nodig hebt, een site waarvan je de stijl mooi vindt..."
+                      : "Wat probeer je te bouwen, en wat is je globale budget of doorlooptijd?"
                   }
                 />
               </div>
@@ -287,15 +286,15 @@ export function RequestModal({
 
             <div className="flex items-center gap-3 border-t border-line px-6 py-4">
               <p className="flex-1 text-xs leading-snug text-muted">
-                We will email a confirmation to you and a copy to {SITE.name}. No
-                payment is taken now.
+                We mailen een bevestiging naar jou en een kopie naar {SITE.name}.
+                Er wordt nu niets in rekening gebracht.
               </p>
               <button
                 type="submit"
                 disabled={pending}
                 className="btn-gradient shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
               >
-                {pending ? "Sending..." : "Send request"}
+                {pending ? "Versturen..." : "Aanvraag versturen"}
               </button>
             </div>
           </form>

@@ -29,19 +29,19 @@ export function InvoiceSendButton({
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) {
-        setResult({ sent: false, message: data?.error ?? "Could not send it." });
+        setResult({ sent: false, message: data?.error ?? "Kon het niet versturen." });
         return;
       }
       if (data.emailSent) {
-        setResult({ sent: true, message: "Emailed to the client." });
+        setResult({ sent: true, message: "Gemaild naar de klant." });
       } else {
         setResult({
           sent: false,
-          message: `Couldn't email it (${data.emailError}). Download the PDF and send it yourself.`,
+          message: `Kon het niet mailen (${data.emailError}). Download de PDF en stuur hem zelf.`,
         });
       }
     } catch {
-      setResult({ sent: false, message: "Couldn't reach the server." });
+      setResult({ sent: false, message: "Kon de server niet bereiken." });
     } finally {
       setPending(false);
     }
@@ -55,7 +55,11 @@ export function InvoiceSendButton({
         onClick={() => void send()}
         className="rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle disabled:opacity-55"
       >
-        {pending ? "Sending..." : alreadySentAt ? "Resend by email" : "Send by email"}
+        {pending
+          ? "Versturen..."
+          : alreadySentAt
+            ? "Opnieuw mailen"
+            : "Mailen naar klant"}
       </button>
       {result && (
         <p

@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   if (!limit.allowed) {
     return tooManyRequests(
       limit.retryAfter,
-      "Too many sign-in attempts. Try again later.",
+      "Te veel inlogpogingen. Probeer het later opnieuw.",
     );
   }
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const { email, password } = body as { email?: unknown; password?: unknown };
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     email.length > 200 ||
     password.length > 200
   ) {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const tenantId = await getTenantId();
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   if (!isStaff(result.user)) {
     await signOut();
     return NextResponse.json(
-      { error: "This account doesn't have admin access." },
+      { error: "Dit account heeft geen beheerderstoegang." },
       { status: 403 },
     );
   }

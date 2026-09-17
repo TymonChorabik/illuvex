@@ -16,11 +16,11 @@ type Invoice = {
 };
 
 const STATUS_LABELS: Record<Invoice["status"], string> = {
-  DRAFT: "Draft",
-  SENT: "Awaiting payment",
-  PAID: "Paid",
-  OVERDUE: "Overdue",
-  CANCELLED: "Cancelled",
+  DRAFT: "Concept",
+  SENT: "Wacht op betaling",
+  PAID: "Betaald",
+  OVERDUE: "Verlopen",
+  CANCELLED: "Geannuleerd",
 };
 
 const STATUS_STYLES: Record<Invoice["status"], string> = {
@@ -79,14 +79,14 @@ export default function PortalPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not sign in.");
+        setError(data.error ?? "Kon niet inloggen.");
         return;
       }
       setUser(data.user);
       setPassword("");
       await loadInvoices();
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ export default function PortalPage() {
   if (checking) {
     return (
       <div className="mx-auto max-w-sm px-5 py-24 text-center text-sm text-muted">
-        Loading...
+        Laden...
       </div>
     );
   }
@@ -109,9 +109,9 @@ export default function PortalPage() {
   if (!user) {
     return (
       <div className="mx-auto max-w-sm px-5 py-20">
-        <h1 className="text-2xl font-semibold tracking-tight">Client portal</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Klantportal</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          Sign in to see your invoices.
+          Log in om je facturen te zien.
         </p>
         <form onSubmit={signIn} className="mt-6 space-y-3">
           <input
@@ -119,7 +119,7 @@ export default function PortalPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@yourbusiness.com"
+            placeholder="jij@jouwbedrijf.nl"
             autoComplete="username"
             className="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
           />
@@ -128,7 +128,7 @@ export default function PortalPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Wachtwoord"
             autoComplete="current-password"
             className="w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent"
           />
@@ -137,7 +137,7 @@ export default function PortalPage() {
             disabled={loading}
             className="w-full rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
           >
-            {loading ? "Checking..." : "Sign in"}
+            {loading ? "Bezig met controleren..." : "Inloggen"}
           </button>
         </form>
         {error && (
@@ -146,14 +146,15 @@ export default function PortalPage() {
           </p>
         )}
         <p className="mt-6 text-xs leading-relaxed text-muted">
-          No account yet? We create one for you when your project starts. Email{" "}
+          Nog geen account? We maken er een voor je aan zodra je project
+          start. Mail{" "}
           <a
             href={`mailto:${SITE.businessEmail}`}
             className="font-medium text-accent hover:underline"
           >
             {SITE.businessEmail}
           </a>{" "}
-          and we will send an invite.
+          en we sturen een uitnodiging.
         </p>
       </div>
     );
@@ -168,11 +169,11 @@ export default function PortalPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            Hello, {user.name}
+            Hallo, {user.name}
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            {invoices.length} invoice{invoices.length === 1 ? "" : "s"}
-            {outstanding > 0 && ` · ${outstanding} awaiting payment`}
+            {invoices.length} {invoices.length === 1 ? "factuur" : "facturen"}
+            {outstanding > 0 && ` · ${outstanding} wacht(en) op betaling`}
           </p>
         </div>
         <button
@@ -180,15 +181,15 @@ export default function PortalPage() {
           onClick={() => void signOut()}
           className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-subtle hover:text-ink"
         >
-          Sign out
+          Uitloggen
         </button>
       </div>
 
       {invoices.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-medium">No invoices yet.</p>
+          <p className="font-medium">Nog geen facturen.</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-            They will show up here once one is issued to you.
+            Ze verschijnen hier zodra er een aan je wordt uitgegeven.
           </p>
         </div>
       ) : (
@@ -212,9 +213,9 @@ export default function PortalPage() {
                   </div>
                   <p className="mt-1.5 text-xs text-muted">
                     {invoice.issuedAt &&
-                      `Issued ${new Date(invoice.issuedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}
+                      `Uitgegeven ${new Date(invoice.issuedAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}`}
                     {invoice.dueAt &&
-                      ` · due ${new Date(invoice.dueAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}
+                      ` · vervalt ${new Date(invoice.dueAt).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}`}
                   </p>
                 </div>
                 <div className="text-right">
@@ -227,7 +228,7 @@ export default function PortalPage() {
                         invoice.totalCents - invoice.paidCents,
                         invoice.currency,
                       )}{" "}
-                      outstanding
+                      openstaand
                     </p>
                   )}
                 </div>
@@ -238,7 +239,7 @@ export default function PortalPage() {
       )}
 
       <p className="mt-6 text-xs leading-relaxed text-muted">
-        Questions about an invoice? Email{" "}
+        Vragen over een factuur? Mail{" "}
         <a
           href={`mailto:${SITE.businessEmail}`}
           className="font-medium text-accent hover:underline"

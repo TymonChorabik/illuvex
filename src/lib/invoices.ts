@@ -95,7 +95,7 @@ export async function createInvoice(tenantId: string, input: CreateInvoiceInput)
       where: { id: input.clientId, tenantId },
       select: { id: true },
     });
-    if (!client) throw new Error("Client not found for this tenant.");
+    if (!client) throw new Error("Klant niet gevonden voor deze tenant.");
 
     return tx.invoice.create({
       data: {
@@ -132,11 +132,11 @@ export async function invoiceFromQuote(tenantId: string, quoteId: string) {
     where: { id: quoteId, tenantId },
     include: { lines: { orderBy: { sortOrder: "asc" } } },
   });
-  if (!quote) return { ok: false as const, error: "Quote not found." };
+  if (!quote) return { ok: false as const, error: "Offerte niet gevonden." };
   if (quote.status !== "ACCEPTED") {
     return {
       ok: false as const,
-      error: "Only an accepted quote can be turned into an invoice.",
+      error: "Alleen een geaccepteerde offerte kan worden omgezet in een factuur.",
     };
   }
 
@@ -147,7 +147,7 @@ export async function invoiceFromQuote(tenantId: string, quoteId: string) {
   if (existing) {
     return {
       ok: false as const,
-      error: `This quote already has an invoice (${existing.number ?? "draft"}).`,
+      error: `Deze offerte heeft al een factuur (${existing.number ?? "concept"}).`,
     };
   }
 
@@ -174,12 +174,12 @@ export async function updateInvoiceLines(
     where: { id, tenantId },
     select: { id: true, status: true },
   });
-  if (!invoice) return { ok: false as const, error: "Invoice not found." };
+  if (!invoice) return { ok: false as const, error: "Factuur niet gevonden." };
   if (invoice.status !== "DRAFT") {
     return {
       ok: false as const,
       error:
-        "An issued invoice cannot be changed. Cancel it and issue a corrected one.",
+        "Een uitgegeven factuur kan niet worden gewijzigd. Annuleer hem en maak een gecorrigeerde versie aan.",
     };
   }
 
@@ -223,12 +223,12 @@ export async function issueInvoice(
       where: { id, tenantId },
       include: { client: true, lines: true },
     });
-    if (!invoice) return { ok: false as const, error: "Invoice not found." };
+    if (!invoice) return { ok: false as const, error: "Factuur niet gevonden." };
     if (invoice.status !== "DRAFT") {
-      return { ok: false as const, error: "This invoice has already been issued." };
+      return { ok: false as const, error: "Deze factuur is al uitgegeven." };
     }
     if (invoice.lines.length === 0) {
-      return { ok: false as const, error: "An invoice needs at least one line." };
+      return { ok: false as const, error: "Een factuur heeft minstens één regel nodig." };
     }
 
     const now = new Date();
@@ -279,7 +279,7 @@ export async function recordPayment(
   amountCents: number,
 ) {
   if (!Number.isInteger(amountCents) || amountCents <= 0) {
-    return { ok: false as const, error: "Payment amount must be a positive whole number of cents." };
+    return { ok: false as const, error: "Betaalbedrag moet een positief geheel aantal centen zijn." };
   }
 
   return prisma.$transaction(async (tx) => {
@@ -287,19 +287,19 @@ export async function recordPayment(
       where: { id, tenantId },
       select: { id: true, status: true, paidCents: true, totalCents: true },
     });
-    if (!invoice) return { ok: false as const, error: "Invoice not found." };
+    if (!invoice) return { ok: false as const, error: "Factuur niet gevonden." };
     if (invoice.status === "DRAFT") {
-      return { ok: false as const, error: "Issue the invoice before recording a payment." };
+      return { ok: false as const, error: "Geef de factuur uit voordat je een betaling registreert." };
     }
     if (invoice.status === "CANCELLED") {
-      return { ok: false as const, error: "This invoice was cancelled." };
+      return { ok: false as const, error: "Deze factuur is geannuleerd." };
     }
 
     const paid = invoice.paidCents + amountCents;
     if (paid > invoice.totalCents) {
       return {
         ok: false as const,
-        error: "That is more than the outstanding amount.",
+        error: "Dat is meer dan het openstaande bedrag.",
       };
     }
 
@@ -326,11 +326,11 @@ export async function cancelInvoice(tenantId: string, id: string) {
     where: { id, tenantId },
     select: { id: true, status: true },
   });
-  if (!invoice) return { ok: false as const, error: "Invoice not found." };
+  if (!invoice) return { ok: false as const, error: "Factuur niet gevonden." };
   if (invoice.status === "PAID") {
     return {
       ok: false as const,
-      error: "A paid invoice cannot be cancelled. Issue a credit note instead.",
+      error: "Een betaalde factuur kan niet worden geannuleerd. Maak in plaats daarvan een creditnota aan.",
     };
   }
 

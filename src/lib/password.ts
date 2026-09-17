@@ -99,15 +99,15 @@ export type PasswordProblem = string | null;
 /** Server-side password policy. Length beats composition rules (NIST 800-63B). */
 export function checkPasswordStrength(password: string): PasswordProblem {
   if (password.length < MIN_PASSWORD_LENGTH) {
-    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+    return `Wachtwoord moet minstens ${MIN_PASSWORD_LENGTH} tekens lang zijn.`;
   }
   if (password.length > 200) {
-    return "Password must be under 200 characters.";
+    return "Wachtwoord moet korter zijn dan 200 tekens.";
   }
   const lowered = password.toLowerCase();
   const banned = ["password", "illudesk", "12345678", "qwerty", "letmein"];
   if (banned.some((word) => lowered.includes(word))) {
-    return "That password is too easy to guess. Pick something less predictable.";
+    return "Dat wachtwoord is te makkelijk te raden. Kies iets minder voorspelbaars.";
   }
   return null;
 }

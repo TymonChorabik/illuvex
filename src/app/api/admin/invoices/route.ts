@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
   const b = body as Record<string, unknown>;
   const tenantId = await getTenantId();
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
   }
 
   if (typeof b.clientId !== "string" || !b.clientId) {
-    return NextResponse.json({ error: "A client is required." }, { status: 400 });
+    return NextResponse.json({ error: "Een klant is verplicht." }, { status: 400 });
   }
   const lines = parseInvoiceLines(b.lines);
   if (!lines.ok) return NextResponse.json({ error: lines.error }, { status: 400 });

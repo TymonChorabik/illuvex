@@ -45,20 +45,20 @@ export default function Page() {
           <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center">
             <p className="font-medium">
               {activeCount > 0
-                ? "Good — that narrows it down."
-                : "Every project is quoted for what it actually needs."}
+                ? "Mooi — dat maakt het duidelijker."
+                : "Elk project krijgt een offerte op maat."}
             </p>
             <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
               {activeCount > 0
-                ? "Send us what you picked and we'll reply with a real price, not a guess."
-                : "Pick what applies on the left, or just tell us what you're after."}
+                ? "Stuur ons wat je hebt aangevinkt en we reageren met een echte prijs, geen slag in de lucht."
+                : "Vink links aan wat van toepassing is, of vertel gewoon wat je zoekt."}
             </p>
             <button
               type="button"
               onClick={() => setRequesting(true)}
               className="btn-gradient mt-5 rounded-full px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
-              Get a custom quote
+              Offerte op maat aanvragen
             </button>
           </div>
         </div>

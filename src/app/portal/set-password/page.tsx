@@ -23,12 +23,12 @@ function SetPasswordForm() {
       );
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "This link is not valid.");
+        setError(data.error ?? "Deze link is niet geldig.");
         return;
       }
       setAccount(data);
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setChecking(false);
     }
@@ -41,7 +41,7 @@ function SetPasswordForm() {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (password !== confirm) {
-      setError("The two passwords do not match.");
+      setError("De twee wachtwoorden komen niet overeen.");
       return;
     }
     setPending(true);
@@ -54,12 +54,12 @@ function SetPasswordForm() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not set your password.");
+        setError(data.error ?? "Kon je wachtwoord niet instellen.");
         return;
       }
       router.push("/portal");
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setPending(false);
     }
@@ -67,14 +67,14 @@ function SetPasswordForm() {
 
   if (checking) {
     return (
-      <p className="py-24 text-center text-sm text-muted">Checking your link...</p>
+      <p className="py-24 text-center text-sm text-muted">Link controleren...</p>
     );
   }
 
   if (!account) {
     return (
       <div className="py-20 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Link not valid</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Link niet geldig</h1>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           {error}
         </p>
@@ -88,12 +88,12 @@ function SetPasswordForm() {
   return (
     <div className="py-20">
       <h1 className="text-2xl font-semibold tracking-tight">
-        Choose your password
+        Kies je wachtwoord
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted">
-        For <span className="font-medium text-ink">{account.email}</span>. At
-        least {MIN_PASSWORD_LENGTH} characters — a short sentence works well and
-        is easier to remember than a jumble.
+        Voor <span className="font-medium text-ink">{account.email}</span>.
+        Minimaal {MIN_PASSWORD_LENGTH} tekens — een korte zin werkt goed en is
+        makkelijker te onthouden dan een reeks tekens.
       </p>
 
       <form onSubmit={submit} className="mt-6 space-y-3">
@@ -103,7 +103,7 @@ function SetPasswordForm() {
           minLength={MIN_PASSWORD_LENGTH}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="New password"
+          placeholder="Nieuw wachtwoord"
           autoComplete="new-password"
           className={field}
         />
@@ -112,7 +112,7 @@ function SetPasswordForm() {
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          placeholder="Repeat password"
+          placeholder="Herhaal wachtwoord"
           autoComplete="new-password"
           className={field}
         />
@@ -121,7 +121,7 @@ function SetPasswordForm() {
           disabled={pending}
           className="w-full rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
         >
-          {pending ? "Saving..." : "Set password and sign in"}
+          {pending ? "Opslaan..." : "Wachtwoord instellen en inloggen"}
         </button>
       </form>
 
@@ -139,7 +139,7 @@ export default function SetPasswordPage() {
     <div className="mx-auto max-w-sm px-5">
       {/* useSearchParams needs a Suspense boundary during prerender. */}
       <Suspense
-        fallback={<p className="py-24 text-center text-sm text-muted">Loading...</p>}
+        fallback={<p className="py-24 text-center text-sm text-muted">Laden...</p>}
       >
         <SetPasswordForm />
       </Suspense>

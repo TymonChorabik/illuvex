@@ -47,13 +47,13 @@ export function parseQuoteBody(
   if (opts.requireClient) {
     const c = b.client as Record<string, unknown> | undefined;
     if (!c || typeof c !== "object") {
-      return { ok: false, error: "Client details are required." };
+      return { ok: false, error: "Klantgegevens zijn verplicht." };
     }
     const name = str(c.name, 200);
     const email = str(c.email, 200);
-    if (!name) return { ok: false, error: "Client name is required." };
+    if (!name) return { ok: false, error: "Naam van de klant is verplicht." };
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return { ok: false, error: "A valid client email is required." };
+      return { ok: false, error: "Een geldig e-mailadres van de klant is verplicht." };
     }
     client = {
       name,
@@ -72,7 +72,7 @@ export function parseQuoteBody(
   let title: string | undefined;
   if (opts.requireClient || b.title !== undefined) {
     const parsed = str(b.title, 200);
-    if (!parsed) return { ok: false, error: "A quote title is required." };
+    if (!parsed) return { ok: false, error: "Een titel voor de offerte is verplicht." };
     title = parsed;
   }
 
@@ -86,7 +86,7 @@ export function parseQuoteBody(
     } else {
       const date = new Date(String(b.validUntil));
       if (Number.isNaN(date.getTime())) {
-        return { ok: false, error: "Valid-until is not a real date." };
+        return { ok: false, error: "Geldig-tot is geen geldige datum." };
       }
       validUntil = date;
     }
@@ -97,10 +97,10 @@ export function parseQuoteBody(
   if (opts.requireClient || b.lines !== undefined) {
     const raw = b.lines;
     if (!Array.isArray(raw) || raw.length === 0) {
-      return { ok: false, error: "A quote needs at least one line." };
+      return { ok: false, error: "Een offerte heeft minstens één regel nodig." };
     }
     if (raw.length > MAX_LINES) {
-      return { ok: false, error: `A quote can have at most ${MAX_LINES} lines.` };
+      return { ok: false, error: `Een offerte kan maximaal ${MAX_LINES} regels hebben.` };
     }
 
     lines = [];
@@ -110,7 +110,7 @@ export function parseQuoteBody(
 
       const description = str(line.description, 500);
       if (!description) {
-        return { ok: false, error: `Line ${position} needs a description.` };
+        return { ok: false, error: `Regel ${position} heeft een omschrijving nodig.` };
       }
 
       const quantity = line.quantity;
@@ -122,7 +122,7 @@ export function parseQuoteBody(
       ) {
         return {
           ok: false,
-          error: `Line ${position}: quantity must be a whole number of at least 1.`,
+          error: `Regel ${position}: aantal moet een geheel getal van minstens 1 zijn.`,
         };
       }
 
@@ -135,7 +135,7 @@ export function parseQuoteBody(
       ) {
         return {
           ok: false,
-          error: `Line ${position}: price must be a whole number of cents.`,
+          error: `Regel ${position}: prijs moet een geheel aantal centen zijn.`,
         };
       }
 
@@ -146,7 +146,7 @@ export function parseQuoteBody(
       ) {
         return {
           ok: false,
-          error: `Line ${position}: VAT rate must be one of ${ALLOWED_VAT_BPS.map((b) => `${b / 100}%`).join(", ")}.`,
+          error: `Regel ${position}: BTW-tarief moet een van ${ALLOWED_VAT_BPS.map((b) => `${b / 100}%`).join(", ")} zijn.`,
         };
       }
 

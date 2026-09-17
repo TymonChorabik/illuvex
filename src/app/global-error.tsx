@@ -13,7 +13,7 @@ export default function GlobalError({
   retry: () => void;
 }) {
   return (
-    <html lang="en">
+    <html lang="nl">
       <body
         style={{
           margin: 0,
@@ -21,25 +21,25 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#faf9f7",
-          color: "#1c1917",
+          background: "#e8eeff",
+          color: "#0b1440",
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
           textAlign: "center",
           padding: "2rem",
         }}
       >
-        <title>Something went wrong</title>
+        <title>Er ging iets mis</title>
         <div style={{ maxWidth: "28rem" }}>
           <p
             style={{
               margin: 0,
               fontSize: "0.875rem",
               fontWeight: 500,
-              color: "#d94f0b",
+              color: "#1e5bff",
             }}
           >
-            Error
+            Fout
           </p>
           <h1
             style={{
@@ -48,17 +48,17 @@ export default function GlobalError({
               letterSpacing: "-0.02em",
             }}
           >
-            The site failed to load
+            De site kon niet worden geladen
           </h1>
           <p
             style={{
               margin: "0.75rem 0 0",
               fontSize: "0.95rem",
               lineHeight: 1.6,
-              color: "#78716c",
+              color: "#5b6478",
             }}
           >
-            Please try again in a moment.
+            Probeer het over een moment opnieuw.
           </p>
           <button
             type="button"
@@ -67,7 +67,7 @@ export default function GlobalError({
               marginTop: "1.75rem",
               border: 0,
               borderRadius: "0.5rem",
-              background: "#1c1917",
+              background: "#0b1440",
               color: "#fff",
               padding: "0.65rem 1.1rem",
               fontSize: "0.875rem",
@@ -75,7 +75,7 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Try again
+            Probeer opnieuw
           </button>
           {error.digest && (
             <p
@@ -83,10 +83,10 @@ export default function GlobalError({
                 marginTop: "2rem",
                 fontFamily: "ui-monospace, SFMono-Regular, monospace",
                 fontSize: "0.75rem",
-                color: "#78716c",
+                color: "#5b6478",
               }}
             >
-              Reference: {error.digest}
+              Referentie: {error.digest}
             </p>
           )}
         </div>

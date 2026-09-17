@@ -13,19 +13,19 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const limit = rateLimit(clientKey(request, "set-password"), 10, 15 * 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many attempts. Try again later.");
+    return tooManyRequests(limit.retryAfter, "Te veel pogingen. Probeer het later opnieuw.");
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const { token, password } = body as { token?: unknown; password?: unknown };
   if (typeof token !== "string" || typeof password !== "string" || password.length > 200) {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldig verzoek." }, { status: 400 });
   }
 
   const result = await setPasswordWithToken(token, password);

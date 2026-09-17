@@ -11,12 +11,12 @@ export async function POST(request: Request, ctx: RouteContext<"/api/admin/invoi
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
 
   const amount = (body as { amountCents?: unknown }).amountCents;
   if (typeof amount !== "number") {
-    return NextResponse.json({ error: "Amount is required." }, { status: 400 });
+    return NextResponse.json({ error: "Bedrag is verplicht." }, { status: 400 });
   }
 
   const { id } = await ctx.params;
@@ -24,7 +24,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/admin/invoi
   if (!result.ok) {
     return NextResponse.json(
       { error: result.error },
-      { status: result.error.includes("not found") ? 404 : 409 },
+      { status: result.error.includes("niet gevonden") ? 404 : 409 },
     );
   }
   return NextResponse.json({ invoice: result.invoice });

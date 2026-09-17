@@ -10,7 +10,7 @@ export async function GET(_r: Request, ctx: RouteContext<"/api/admin/invoices/[i
 
   const { id } = await ctx.params;
   const invoice = await getInvoice(await getTenantId(), id);
-  if (!invoice) return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
+  if (!invoice) return NextResponse.json({ error: "Factuur niet gevonden." }, { status: 404 });
   return NextResponse.json({ invoice });
 }
 
@@ -22,7 +22,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/admin/invo
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
   const lines = parseInvoiceLines((body as Record<string, unknown>).lines);
   if (!lines.ok) return NextResponse.json({ error: lines.error }, { status: 400 });
@@ -32,7 +32,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/admin/invo
   if (!result.ok) {
     return NextResponse.json(
       { error: result.error },
-      { status: result.error.includes("not found") ? 404 : 409 },
+      { status: result.error.includes("niet gevonden") ? 404 : 409 },
     );
   }
   return NextResponse.json({ invoice: result.invoice });
@@ -47,7 +47,7 @@ export async function DELETE(_r: Request, ctx: RouteContext<"/api/admin/invoices
   if (!result.ok) {
     return NextResponse.json(
       { error: result.error },
-      { status: result.error.includes("not found") ? 404 : 409 },
+      { status: result.error.includes("niet gevonden") ? 404 : 409 },
     );
   }
   return NextResponse.json({ invoice: result.invoice });

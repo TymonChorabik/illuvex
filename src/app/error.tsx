@@ -23,13 +23,13 @@ export default function Error({
 
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-5 py-20 text-center">
-      <p className="font-mono text-sm font-medium text-accent">Error</p>
+      <p className="font-mono text-sm font-medium text-accent">Fout</p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-        Something went wrong
+        Er ging iets mis
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">
-        This one is on us, not you. Try again — if it keeps happening, send us
-        the reference below and we&apos;ll chase it.
+        Dit ligt aan ons, niet aan jou. Probeer het opnieuw — blijft het
+        gebeuren, stuur ons dan de referentie hieronder en we zoeken het uit.
       </p>
 
       <div className="mt-7 flex flex-wrap justify-center gap-2.5">
@@ -38,21 +38,21 @@ export default function Error({
           onClick={retry}
           className="rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
         >
-          Try again
+          Probeer opnieuw
         </button>
         <a
-          href={`mailto:${SITE.businessEmail}?subject=Website error${
+          href={`mailto:${SITE.businessEmail}?subject=Website fout${
             error.digest ? ` (ref ${error.digest})` : ""
           }`}
           className="rounded-lg border border-line px-4 py-2.5 text-sm font-medium transition-colors hover:bg-subtle"
         >
-          Report it
+          Meld het
         </a>
       </div>
 
       {error.digest && (
         <p className="mt-8 font-mono text-xs text-muted">
-          Reference: {error.digest}
+          Referentie: {error.digest}
         </p>
       )}
     </div>

@@ -6,8 +6,8 @@ import { Wordmark } from "@/components/logo";
 import { OPEN_CHAT_EVENT } from "@/components/chat-widget";
 
 const LINKS = [
-  { href: "/", label: "Get a quote" },
-  { href: "/transactions", label: "Transactions" },
+  { href: "/", label: "Offerte aanvragen" },
+  { href: "/transactions", label: "Transacties" },
 ];
 
 export function Navbar() {
@@ -16,7 +16,7 @@ export function Navbar() {
   return (
     <header className="site-header sticky top-0 z-30 bg-ink">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-5">
-        <Link href="/" aria-label="Home">
+        <Link href="/" aria-label="Startpagina">
           <Wordmark />
         </Link>
 
@@ -47,7 +47,7 @@ export function Navbar() {
             }
             className="btn-gradient ml-2 hidden rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 sm:block"
           >
-            Talk to us
+            Neem contact op
           </button>
         </div>
       </nav>

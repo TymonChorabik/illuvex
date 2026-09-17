@@ -67,17 +67,17 @@ export default function NewQuotePage() {
     const payloadLines = [];
     for (const [index, line] of lines.entries()) {
       if (!line.description.trim()) {
-        setError(`Line ${index + 1} needs a description.`);
+        setError(`Regel ${index + 1} heeft een omschrijving nodig.`);
         return;
       }
       const cents = parseMoneyToCents(line.unitPrice);
       if (cents === null) {
-        setError(`Line ${index + 1}: that price is not a number.`);
+        setError(`Regel ${index + 1}: die prijs is geen getal.`);
         return;
       }
       const qty = Number.parseInt(line.quantity, 10);
       if (!Number.isInteger(qty) || qty < 1) {
-        setError(`Line ${index + 1}: quantity must be a whole number.`);
+        setError(`Regel ${index + 1}: aantal moet een heel getal zijn.`);
         return;
       }
       payloadLines.push({
@@ -112,12 +112,12 @@ export default function NewQuotePage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Could not create the quote.");
+        setError(data.error ?? "Kon de offerte niet aanmaken.");
         return;
       }
       router.push("/admin/quotes");
     } catch {
-      setError("Couldn't reach the server.");
+      setError("Kon de server niet bereiken.");
     } finally {
       setPending(false);
     }
@@ -127,99 +127,100 @@ export default function NewQuotePage() {
     <div className="mx-auto max-w-3xl px-5 py-12">
       <AdminNav />
       <div className="mt-6 flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight">New quote</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Nieuwe offerte</h1>
         <Link
           href="/admin/quotes"
           className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
         >
-          Cancel
+          Annuleren
         </Link>
       </div>
 
       <form onSubmit={submit} className="mt-8 space-y-8">
         <section className="rounded-xl border border-line bg-surface p-6">
-          <h2 className="mb-4 text-sm font-semibold">Client</h2>
+          <h2 className="mb-4 text-sm font-semibold">Klant</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className={label} htmlFor="clientName">
-                Business name *
+                Bedrijfsnaam *
               </label>
               <input id="clientName" name="clientName" required maxLength={200} className={field} />
             </div>
             <div>
               <label className={label} htmlFor="clientEmail">
-                Email *
+                E-mail *
               </label>
               <input id="clientEmail" name="clientEmail" type="email" required className={field} />
             </div>
             <div>
               <label className={label} htmlFor="contactName">
-                Contact person
+                Contactpersoon
               </label>
               <input id="contactName" name="contactName" maxLength={200} className={field} />
             </div>
             <div>
               <label className={label} htmlFor="phone">
-                Phone
+                Telefoon
               </label>
               <input id="phone" name="phone" maxLength={40} className={field} />
             </div>
             <div>
               <label className={label} htmlFor="vatNumber">
-                BTW number
+                BTW-nummer
               </label>
               <input id="vatNumber" name="vatNumber" maxLength={40} className={field} placeholder="NL000000000B00" />
             </div>
             <div>
               <label className={label} htmlFor="addressLine1">
-                Street
+                Straat
               </label>
               <input id="addressLine1" name="addressLine1" maxLength={200} className={field} />
             </div>
             <div>
               <label className={label} htmlFor="city">
-                City
+                Plaats
               </label>
               <input id="city" name="city" maxLength={100} className={field} />
             </div>
             <div>
               <label className={label} htmlFor="country">
-                Country
+                Land
               </label>
               <input id="country" name="country" maxLength={100} className={field} />
             </div>
           </div>
           <p className="mt-3 text-xs text-muted">
-            An existing client with this email is reused rather than duplicated.
+            Een bestaande klant met dit e-mailadres wordt hergebruikt in plaats
+            van gedupliceerd.
           </p>
         </section>
 
         <section className="rounded-xl border border-line bg-surface p-6">
-          <h2 className="mb-4 text-sm font-semibold">Quote</h2>
+          <h2 className="mb-4 text-sm font-semibold">Offerte</h2>
           <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
             <div>
               <label className={label} htmlFor="title">
-                Title *
+                Titel *
               </label>
               <input id="title" name="title" required maxLength={200} className={field} placeholder="Webshop + hosting" />
             </div>
             <div>
               <label className={label} htmlFor="validUntil">
-                Valid until
+                Geldig tot
               </label>
               <input id="validUntil" name="validUntil" type="date" className={field} />
             </div>
           </div>
           <div className="mt-4">
             <label className={label} htmlFor="notes">
-              Notes for the client
+              Notities voor de klant
             </label>
             <textarea id="notes" name="notes" rows={3} maxLength={5000} className={`${field} resize-none`} />
           </div>
         </section>
 
         <section className="rounded-xl border border-line bg-surface p-6">
-          <h2 className="mb-4 text-sm font-semibold">Lines</h2>
+          <h2 className="mb-4 text-sm font-semibold">Regels</h2>
           <div className="space-y-3">
             {lines.map((line, index) => (
               <div
@@ -227,17 +228,17 @@ export default function NewQuotePage() {
                 className="grid gap-2 sm:grid-cols-[1fr_70px_120px_100px_36px] sm:items-end"
               >
                 <div>
-                  {index === 0 && <label className={label}>Description</label>}
+                  {index === 0 && <label className={label}>Omschrijving</label>}
                   <input
                     value={line.description}
                     onChange={(e) => updateLine(index, { description: e.target.value })}
                     maxLength={500}
                     className={field}
-                    placeholder="What is being delivered"
+                    placeholder="Wat wordt er geleverd"
                   />
                 </div>
                 <div>
-                  {index === 0 && <label className={label}>Qty</label>}
+                  {index === 0 && <label className={label}>Aantal</label>}
                   <input
                     value={line.quantity}
                     onChange={(e) => updateLine(index, { quantity: e.target.value })}
@@ -246,7 +247,7 @@ export default function NewQuotePage() {
                   />
                 </div>
                 <div>
-                  {index === 0 && <label className={label}>Unit price</label>}
+                  {index === 0 && <label className={label}>Prijs per stuk</label>}
                   <input
                     value={line.unitPrice}
                     onChange={(e) => updateLine(index, { unitPrice: e.target.value })}
@@ -273,7 +274,7 @@ export default function NewQuotePage() {
                 </div>
                 <button
                   type="button"
-                  aria-label={`Remove line ${index + 1}`}
+                  aria-label={`Regel ${index + 1} verwijderen`}
                   disabled={lines.length === 1}
                   onClick={() =>
                     setLines((current) => current.filter((_, i) => i !== index))
@@ -291,12 +292,12 @@ export default function NewQuotePage() {
             onClick={() => setLines((current) => [...current, { ...BLANK_LINE }])}
             className="mt-4 rounded-lg border border-line px-3.5 py-2 text-sm font-medium transition-colors hover:bg-subtle"
           >
-            Add line
+            Regel toevoegen
           </button>
 
           <div className="ml-auto mt-6 max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Subtotal</span>
+              <span className="text-muted">Subtotaal</span>
               <span className="tabular-nums">{formatMoney(totals.subtotalCents)}</span>
             </div>
             {totals.vatByRate.map((rate) => (
@@ -306,7 +307,7 @@ export default function NewQuotePage() {
               </div>
             ))}
             <div className="flex justify-between border-t-2 border-ink pt-2 text-base font-semibold">
-              <span>Total</span>
+              <span>Totaal</span>
               <span className="tabular-nums">{formatMoney(totals.totalCents)}</span>
             </div>
           </div>
@@ -324,10 +325,11 @@ export default function NewQuotePage() {
             disabled={pending}
             className="rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-55"
           >
-            {pending ? "Saving..." : "Save as draft"}
+            {pending ? "Opslaan..." : "Opslaan als concept"}
           </button>
           <p className="text-xs text-muted">
-            Nothing is emailed yet — you send it from the list once it looks right.
+            Er wordt nog niets gemaild — je verstuurt het vanaf de lijst zodra
+            het er goed uitziet.
           </p>
         </div>
       </form>

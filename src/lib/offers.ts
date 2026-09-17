@@ -34,71 +34,71 @@ export type Offer = {
 
 export const CATEGORY_LABELS: Record<Category, string> = {
   website: "Website",
-  ecommerce: "Online store",
-  webapp: "Web app",
+  ecommerce: "Webshop",
+  webapp: "Webapplicatie",
   marketing: "Marketing",
-  care: "Care & hosting",
+  care: "Onderhoud & hosting",
 };
 
 export const FEATURE_LABELS: Record<Feature, string> = {
-  cms: "Edit it yourself (CMS)",
-  ecommerce: "Sell products online",
-  booking: "Bookings / appointments",
-  seo: "SEO setup",
-  copywriting: "Copywriting included",
-  hosting: "Hosting included",
+  cms: "Zelf te bewerken (CMS)",
+  ecommerce: "Producten online verkopen",
+  booking: "Boekingen / afspraken",
+  seo: "SEO-instellingen",
+  copywriting: "Inclusief copywriting",
+  hosting: "Inclusief hosting",
 };
 
 export const BUDGET_LABELS: Record<BudgetBand, string> = {
-  "under-500": "Under 500",
-  "500-1500": "500 – 1,500",
-  "1500-3000": "1,500 – 3,000",
-  "3000-plus": "3,000+",
+  "under-500": "Tot 500",
+  "500-1500": "500 – 1.500",
+  "1500-3000": "1.500 – 3.000",
+  "3000-plus": "3.000+",
 };
 
 export const TIMELINE_LABELS: Record<TimelineBand, string> = {
-  "under-1-week": "Under a week",
-  "1-3-weeks": "1 – 3 weeks",
-  "1-month-plus": "A month or more",
+  "under-1-week": "Binnen een week",
+  "1-3-weeks": "1 – 3 weken",
+  "1-month-plus": "Een maand of langer",
 };
 
 export const OFFERS: Offer[] = [
   {
     id: "landing-page",
-    name: "Landing Page",
+    name: "Landingspagina",
     summary:
-      "One high-converting page to launch a product, run ads against, or replace a dead social bio link.",
+      "Eén converterende pagina om een product te lanceren, advertenties op te draaien of een dode social-bio-link te vervangen.",
     price: 399,
     category: "website",
     budget: "under-500",
     timeline: "under-1-week",
-    timelineLabel: "5–7 days",
+    timelineLabel: "5–7 dagen",
     features: ["seo", "copywriting", "hosting"],
     includes: [
-      "Single scrolling page, custom designed",
-      "Mobile + tablet + desktop layouts",
-      "Contact form wired to your inbox",
-      "Basic SEO tags and analytics",
-      "2 rounds of revisions",
+      "Eén scrollende pagina, op maat ontworpen",
+      "Layouts voor mobiel + tablet + desktop",
+      "Contactformulier gekoppeld aan je inbox",
+      "Basis SEO-tags en analytics",
+      "2 revisierondes",
     ],
   },
   {
     id: "business-website",
-    name: "Business Website",
+    name: "Bedrijfswebsite",
     summary:
-      "The standard five-page site — home, services, about, contact, and one extra of your choosing.",
+      "De standaard vijf-pagina's-site — home, diensten, over ons, contact, en één pagina naar keuze.",
     price: 899,
     category: "website",
     budget: "500-1500",
     timeline: "1-3-weeks",
-    timelineLabel: "2–3 weeks",
+    timelineLabel: "2–3 weken",
     features: ["cms", "seo", "copywriting", "hosting"],
     includes: [
-      "Up to 5 custom-designed pages",
-      "CMS so you can edit text and images",
-      "Google Business + maps integration",
-      "SEO setup and sitemap submission",
-      "3 rounds of revisions",
+      "Tot 5 pagina's, op maat ontworpen",
+      "CMS zodat je zelf tekst en afbeeldingen aanpast",
+      "Google Bedrijfsprofiel + maps-integratie",
+      "SEO-instellingen en sitemap-aanmelding",
+      "3 revisierondes",
     ],
     popular: true,
   },
@@ -106,116 +106,116 @@ export const OFFERS: Offer[] = [
     id: "site-refresh",
     name: "Redesign & Refresh",
     summary:
-      "Keep your content, replace the look. For sites that work but look ten years old.",
+      "Behoud je content, vervang de uitstraling. Voor sites die werken maar er tien jaar oud uitzien.",
     price: 649,
     category: "website",
     budget: "500-1500",
     timeline: "1-3-weeks",
-    timelineLabel: "1–2 weeks",
+    timelineLabel: "1–2 weken",
     features: ["cms", "seo"],
     includes: [
-      "New design across your existing pages",
-      "Speed and mobile fixes",
-      "Content migrated for you",
-      "Accessibility pass",
-      "2 rounds of revisions",
+      "Nieuw design over je bestaande pagina's",
+      "Snelheids- en mobielverbeteringen",
+      "Content voor je overgezet",
+      "Toegankelijkheidscontrole",
+      "2 revisierondes",
     ],
   },
   {
     id: "online-store",
-    name: "Online Store",
+    name: "Webshop",
     summary:
-      "A full e-commerce build with payments, stock tracking, and an order dashboard you actually understand.",
+      "Een volledige e-commerce-oplossing met betalingen, voorraadbeheer en een orderoverzicht dat je echt begrijpt.",
     price: 1899,
     category: "ecommerce",
     budget: "1500-3000",
     timeline: "1-month-plus",
-    timelineLabel: "4–6 weeks",
+    timelineLabel: "4–6 weken",
     features: ["cms", "ecommerce", "seo", "hosting"],
     includes: [
-      "Up to 50 products loaded for you",
-      "Card payments via Stripe",
-      "Stock, shipping, and tax rules",
-      "Abandoned-cart emails",
-      "Staff training call",
+      "Tot 50 producten voor je ingeladen",
+      "Kaartbetalingen via Stripe",
+      "Voorraad-, verzend- en btw-regels",
+      "E-mails voor achtergelaten winkelwagens",
+      "Trainingsgesprek voor je team",
     ],
   },
   {
     id: "booking-system",
-    name: "Booking System",
+    name: "Boekingssysteem",
     summary:
-      "For salons, trades, clinics, and anyone still taking appointments over DMs.",
+      "Voor salons, vakmensen, klinieken en iedereen die nog afspraken via DM's plant.",
     price: 1200,
     category: "webapp",
     budget: "500-1500",
     timeline: "1-3-weeks",
-    timelineLabel: "3 weeks",
+    timelineLabel: "3 weken",
     features: ["booking", "cms", "hosting"],
     includes: [
-      "Calendar with staff availability",
-      "Automatic email + SMS reminders",
-      "Deposits taken at booking",
-      "Syncs with Google Calendar",
-      "Admin view for your team",
+      "Agenda met beschikbaarheid per medewerker",
+      "Automatische e-mail- + sms-herinneringen",
+      "Aanbetaling bij boeking",
+      "Synchroniseert met Google Agenda",
+      "Beheerdersoverzicht voor je team",
     ],
   },
   {
     id: "custom-web-app",
-    name: "Custom Web App",
+    name: "Maatwerk Webapplicatie",
     summary:
-      "Dashboards, portals, internal tools — when an off-the-shelf template genuinely won't do it.",
+      "Dashboards, portals, interne tools — wanneer een kant-en-klare template écht niet volstaat.",
     price: 3500,
     priceUnit: "+",
     category: "webapp",
     budget: "3000-plus",
     timeline: "1-month-plus",
-    timelineLabel: "6+ weeks",
+    timelineLabel: "6+ weken",
     features: ["cms", "booking", "hosting"],
     includes: [
-      "Discovery workshop and written spec",
-      "User accounts and permissions",
-      "Custom database and admin panel",
-      "API integrations with your tools",
-      "30 days of post-launch support",
+      "Discovery-sessie en geschreven specificatie",
+      "Gebruikersaccounts en rechten",
+      "Eigen database en beheerpaneel",
+      "API-koppelingen met je tools",
+      "30 dagen ondersteuning na livegang",
     ],
   },
   {
     id: "seo-starter",
     name: "SEO Starter",
     summary:
-      "A one-off audit and fix-up so people can actually find the site you already paid for.",
+      "Een eenmalige audit en opknapbeurt zodat mensen de site die je al betaald hebt ook echt vinden.",
     price: 299,
     category: "marketing",
     budget: "under-500",
     timeline: "under-1-week",
-    timelineLabel: "4–5 days",
+    timelineLabel: "4–5 dagen",
     features: ["seo", "copywriting"],
     includes: [
-      "Full technical SEO audit",
-      "Keyword research for your area",
-      "Titles and descriptions rewritten",
-      "Google Search Console setup",
-      "Plain-English report",
+      "Volledige technische SEO-audit",
+      "Zoekwoordenonderzoek voor jouw regio",
+      "Titels en beschrijvingen herschreven",
+      "Google Search Console ingesteld",
+      "Rapport in begrijpelijke taal",
     ],
   },
   {
     id: "care-plan",
-    name: "Care Plan",
+    name: "Onderhoudsplan",
     summary:
-      "Hosting, backups, updates, and a human who answers when something breaks.",
+      "Hosting, back-ups, updates, en een mens die antwoordt als er iets kapot gaat.",
     price: 79,
-    priceUnit: "/mo",
+    priceUnit: "/mnd",
     category: "care",
     budget: "under-500",
     timeline: "under-1-week",
-    timelineLabel: "Starts immediately",
+    timelineLabel: "Start direct",
     features: ["hosting", "seo"],
     includes: [
-      "Fast managed hosting + SSL",
-      "Daily backups, 30-day history",
-      "Software and security updates",
-      "1 hour of content edits monthly",
-      "Uptime monitoring and alerts",
+      "Snelle managed hosting + SSL",
+      "Dagelijkse back-ups, 30 dagen historie",
+      "Software- en beveiligingsupdates",
+      "1 uur content-aanpassingen per maand",
+      "Uptime-monitoring en meldingen",
     ],
   },
 ];
@@ -269,7 +269,7 @@ export function describeFilters(filters: FilterState): string {
   const parts: string[] = [];
   if (filters.categories.length) {
     parts.push(
-      `Looking for: ${filters.categories.map((c) => CATEGORY_LABELS[c]).join(", ")}`,
+      `Op zoek naar: ${filters.categories.map((c) => CATEGORY_LABELS[c]).join(", ")}`,
     );
   }
   if (filters.budgets.length) {
@@ -279,12 +279,12 @@ export function describeFilters(filters: FilterState): string {
   }
   if (filters.timelines.length) {
     parts.push(
-      `Timeline: ${filters.timelines.map((t) => TIMELINE_LABELS[t]).join(", ")}`,
+      `Doorlooptijd: ${filters.timelines.map((t) => TIMELINE_LABELS[t]).join(", ")}`,
     );
   }
   if (filters.features.length) {
     parts.push(
-      `Also want: ${filters.features.map((f) => FEATURE_LABELS[f]).join(", ")}`,
+      `Ook gewenst: ${filters.features.map((f) => FEATURE_LABELS[f]).join(", ")}`,
     );
   }
   return parts.join("\n");

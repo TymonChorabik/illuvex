@@ -16,7 +16,7 @@ export async function POST(
   const { id } = await ctx.params;
   const result = await sendQuote(await getTenantId(), id);
   if (!result.ok) {
-    const status = result.error.includes("not found") ? 404 : 409;
+    const status = result.error.includes("niet gevonden") ? 404 : 409;
     return NextResponse.json({ error: result.error }, { status });
   }
 

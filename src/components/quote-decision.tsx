@@ -19,12 +19,12 @@ export function QuoteDecision({ token }: { token: string }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error ?? "Something went wrong.");
+        setError(data.error ?? "Er ging iets mis.");
         return;
       }
       setDone(data.status);
     } catch {
-      setError("Couldn't reach the server. Please try again.");
+      setError("Kon de server niet bereiken. Probeer het opnieuw.");
     } finally {
       setPending(false);
       setConfirming(null);
@@ -41,8 +41,8 @@ export function QuoteDecision({ token }: { token: string }) {
         }`}
       >
         {done === "ACCEPTED"
-          ? "Thank you — your acceptance is recorded and we will be in touch to get started."
-          : "Thanks for letting us know. We have recorded that you declined."}
+          ? "Bedankt — je acceptatie is geregistreerd en we nemen contact op om te starten."
+          : "Bedankt voor het laten weten. We hebben geregistreerd dat je hebt afgewezen."}
       </div>
     );
   }
@@ -53,8 +53,8 @@ export function QuoteDecision({ token }: { token: string }) {
       <div className="rounded-lg border border-line px-4 py-3.5">
         <p className="text-sm">
           {confirming === "accept"
-            ? "Accept this quote and agree to the total above?"
-            : "Decline this quote?"}
+            ? "Deze offerte accepteren en akkoord met het totaalbedrag hierboven?"
+            : "Deze offerte afwijzen?"}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <button
@@ -66,10 +66,10 @@ export function QuoteDecision({ token }: { token: string }) {
             }`}
           >
             {pending
-              ? "Saving..."
+              ? "Bezig met opslaan..."
               : confirming === "accept"
-                ? "Yes, accept"
-                : "Yes, decline"}
+                ? "Ja, accepteren"
+                : "Ja, afwijzen"}
           </button>
           <button
             type="button"
@@ -77,7 +77,7 @@ export function QuoteDecision({ token }: { token: string }) {
             onClick={() => setConfirming(null)}
             className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-subtle"
           >
-            Cancel
+            Annuleren
           </button>
         </div>
         {error && (
@@ -97,14 +97,14 @@ export function QuoteDecision({ token }: { token: string }) {
           onClick={() => setConfirming("accept")}
           className="btn-gradient rounded-full px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
-          Accept quote
+          Offerte accepteren
         </button>
         <button
           type="button"
           onClick={() => setConfirming("reject")}
           className="rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:bg-subtle"
         >
-          Decline
+          Afwijzen
         </button>
       </div>
       {error && (

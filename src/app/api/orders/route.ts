@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (!limit.allowed) {
     return tooManyRequests(
       limit.retryAfter,
-      "Too many requests sent. Please wait a few minutes and try again.",
+      "Te veel aanvragen verstuurd. Wacht een paar minuten en probeer opnieuw.",
     );
   }
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Ongeldige JSON-body." }, { status: 400 });
   }
 
   const payload = body as Record<string, unknown>;
@@ -44,22 +44,22 @@ export async function POST(request: Request) {
   const offer = isCustom ? null : getOffer(offerId);
   if (!isCustom && !offer) {
     return NextResponse.json(
-      { error: "That package no longer exists." },
+      { error: "Dat pakket bestaat niet meer." },
       { status: 400 },
     );
   }
   if (name.length < 2) {
-    return NextResponse.json({ error: "Please enter your name." }, { status: 400 });
+    return NextResponse.json({ error: "Vul je naam in." }, { status: 400 });
   }
   if (!EMAIL_PATTERN.test(email)) {
     return NextResponse.json(
-      { error: "Please enter a valid email address." },
+      { error: "Vul een geldig e-mailadres in." },
       { status: 400 },
     );
   }
   if (isCustom && notes.length < 5) {
     return NextResponse.json(
-      { error: "Tell us a bit about what you need." },
+      { error: "Vertel ons kort wat je nodig hebt." },
       { status: 400 },
     );
   }
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   // offerte for it.
   const order = await createOrder({
     packageSlug: offer ? offer.id : "custom",
-    offerName: offer ? offer.name : "Custom quote request",
+    offerName: offer ? offer.name : "Offerte op maat aangevraagd",
     price: offer ? offer.price : 0,
     priceUnit: offer?.priceUnit,
     name,
@@ -97,13 +97,13 @@ export async function GET(request: Request) {
   // Order lookup is by email alone, so throttle it against enumeration.
   const limit = rateLimit(clientKey(request, "orders-get"), 20, 60_000);
   if (!limit.allowed) {
-    return tooManyRequests(limit.retryAfter, "Too many lookups. Slow down.");
+    return tooManyRequests(limit.retryAfter, "Te veel zoekopdrachten. Rustig aan.");
   }
 
   const email = new URL(request.url).searchParams.get("email")?.trim() ?? "";
   if (!EMAIL_PATTERN.test(email)) {
     return NextResponse.json(
-      { error: "Enter the email address you ordered with." },
+      { error: "Vul het e-mailadres in waarmee je hebt aangevraagd." },
       { status: 400 },
     );
   }
