@@ -6,6 +6,7 @@ import { getTenantId } from "@/lib/tenant";
 import { getInvoice, type BillingSnapshot } from "@/lib/invoices";
 import { formatMoney, formatVatRate, lineTotals, documentTotals } from "@/lib/money";
 import { SITE } from "@/lib/site";
+import { InvoiceSendButton } from "@/components/invoice-send-button";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -76,8 +77,8 @@ export default async function InvoiceDetailPage(
         >
           ← All invoices
         </Link>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted">
+        <div className="flex items-start gap-3">
+          <span className="mt-2 text-xs text-muted">
             Or use your browser&apos;s Print → Save as PDF.
           </span>
           <a
@@ -87,6 +88,12 @@ export default async function InvoiceDetailPage(
           >
             Download PDF
           </a>
+          {invoice.number && (
+            <InvoiceSendButton
+              invoiceId={invoice.id}
+              alreadySentAt={invoice.emailSentAt?.toISOString() ?? null}
+            />
+          )}
         </div>
       </div>
 

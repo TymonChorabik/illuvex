@@ -266,6 +266,13 @@ export async function issueInvoice(
  * Records a payment. Amounts are cumulative, so a partial payment can be
  * topped up later; the invoice flips to PAID only once fully covered.
  */
+export async function markInvoiceEmailed(tenantId: string, id: string) {
+  await prisma.invoice.updateMany({
+    where: { id, tenantId },
+    data: { emailSentAt: new Date() },
+  });
+}
+
 export async function recordPayment(
   tenantId: string,
   id: string,

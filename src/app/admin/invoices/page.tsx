@@ -17,6 +17,7 @@ type InvoiceRow = {
   paidCents: number;
   issuedAt: string | null;
   dueAt: string | null;
+  emailSentAt: string | null;
   client: { name: string; email: string };
 };
 
@@ -57,6 +58,7 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
 
   const load = useCallback(
     async (status: (typeof FILTERS)[number], forYear: string) => {
@@ -110,6 +112,33 @@ export default function InvoicesPage() {
       setError("Couldn't reach the server.");
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function sendInvoice(id: string) {
+    setSendingId(id);
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/invoices/${id}/send`, {
+        method: "POST",
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setError(data?.error ?? "Could not send the invoice.");
+        return;
+      }
+      // load() clears the error at its own start, so it must run before the
+      // message below, not after — otherwise the reload wipes it instantly.
+      await load(filter, year);
+      if (!data.emailSent) {
+        setError(
+          `Couldn't email it (${data.emailError}). Download the PDF and send it yourself.`,
+        );
+      }
+    } catch {
+      setError("Couldn't reach the server.");
+    } finally {
+      setSendingId(null);
     }
   }
 
@@ -240,6 +269,8 @@ export default function InvoicesPage() {
                         : "Not issued yet"}
                       {invoice.dueAt &&
                         ` · due ${new Date(invoice.dueAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
+                      {invoice.emailSentAt &&
+                        ` · emailed ${new Date(invoice.emailSentAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
                     </p>
                   </div>
 
@@ -260,13 +291,27 @@ export default function InvoicesPage() {
                         View
                       </Link>
                       {invoice.status !== "DRAFT" && (
-                        <a
-                          href={`/api/admin/invoices/${invoice.id}/pdf`}
-                          download={`${invoice.number}.pdf`}
-                          className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
-                        >
-                          PDF
-                        </a>
+                        <>
+                          <a
+                            href={`/api/admin/invoices/${invoice.id}/pdf`}
+                            download={`${invoice.number}.pdf`}
+                            className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
+                          >
+                            PDF
+                          </a>
+                          <button
+                            type="button"
+                            disabled={sendingId === invoice.id}
+                            onClick={() => void sendInvoice(invoice.id)}
+                            className="btn-gradient rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
+                          >
+                            {sendingId === invoice.id
+                              ? "Sending..."
+                              : invoice.emailSentAt
+                                ? "Resend"
+                                : "Send"}
+                          </button>
+                        </>
                       )}
                       {invoice.status === "DRAFT" && (
                         <button

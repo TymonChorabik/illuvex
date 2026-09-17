@@ -412,6 +412,10 @@ model Invoice {
   issuedAt DateTime?
   dueAt    DateTime?
   paidAt   DateTime?
+  /// Last time the PDF was actually emailed to the client. Unlike a quote,
+  /// re-sending is allowed and expected ("I lost it, can you resend") — this
+  /// is informational, not a one-shot gate.
+  emailSentAt DateTime?
 
   /// Frozen copy of the client's billing details at issue time. An invoice
   /// must not change because the client later moved office.
