@@ -1,5 +1,8 @@
 import crypto from "node:crypto";
 import { promisify } from "node:util";
+import { MIN_PASSWORD_LENGTH } from "@/lib/password-policy";
+
+export { MIN_PASSWORD_LENGTH };
 
 const scrypt = promisify(crypto.scrypt) as (
   password: crypto.BinaryLike,
@@ -26,8 +29,6 @@ const KEYLEN = 64;
 const SALT_BYTES = 16;
 // scrypt needs maxmem above 128*N*r or it throws.
 const MAXMEM = 128 * N * R * 2;
-
-export const MIN_PASSWORD_LENGTH = 12;
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.randomBytes(SALT_BYTES);
