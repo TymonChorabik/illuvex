@@ -1,21 +1,54 @@
 @import "tailwindcss";
 
+/*
+ * Brand palette, lifted from illuvex.com: deep navy + electric blue on a
+ * light lavender canvas, Manrope headings over Inter body text. Every
+ * component already reads color through these semantic tokens (bg-ink,
+ * text-muted, border-line, bg-accent, ...) rather than hardcoded values, so
+ * changing them here re-themes the whole app -- admin, portal, quotes and
+ * invoices included -- without touching each component.
+ */
 @theme inline {
-  --color-canvas: #faf9f7;
+  --color-canvas: #e8eeff;
   --color-surface: #ffffff;
-  --color-ink: #1c1917;
-  --color-muted: #78716c;
-  --color-line: #e7e5e4;
-  --color-subtle: #f5f4f2;
-  --color-accent: #d94f0b;
-  --color-accent-soft: #fdf0e7;
-  --font-sans: var(--font-geist-sans);
+  /* Doubles as body text and every solid "bg-ink" button/nav -- the same
+     navy-black illuvex.com uses for its header. */
+  --color-ink: #0b1440;
+  --color-muted: #5b6478;
+  --color-line: #d7dffa;
+  --color-subtle: #eef2ff;
+  --color-accent: #1e5bff;
+  --color-accent-soft: #e3ebff;
+  /* Dark stop of the signature CTA gradient (electric blue -> deep navy),
+     one shade lighter than --color-ink so the gradient has visible range. */
+  --color-navy-soft: #0f1e4a;
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
+}
+
+/* Manrope for every heading, site-wide -- matches illuvex.com's tight,
+   medium-weight display type without every h1/h2/h3 needing its own class. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* The brand's signature pill CTA: electric blue into deep navy, diagonal.
+   Pair with rounded-full; text-white is assumed. */
+.btn-gradient {
+  background: linear-gradient(135deg, var(--color-accent) 20%, var(--color-navy-soft));
 }
 
 /* Keep focus rings visible for keyboard users without boxing every click. */

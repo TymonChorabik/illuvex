@@ -61,8 +61,8 @@ export function QuoteDecision({ token }: { token: string }) {
             type="button"
             disabled={pending}
             onClick={() => void decide(confirming)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55 ${
-              confirming === "accept" ? "bg-accent" : "bg-ink"
+            className={`rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55 ${
+              confirming === "accept" ? "btn-gradient" : "bg-ink"
             }`}
           >
             {pending
@@ -95,14 +95,14 @@ export function QuoteDecision({ token }: { token: string }) {
         <button
           type="button"
           onClick={() => setConfirming("accept")}
-          className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          className="btn-gradient rounded-full px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           Accept quote
         </button>
         <button
           type="button"
           onClick={() => setConfirming("reject")}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:bg-subtle"
+          className="rounded-full border border-line px-5 py-2.5 text-sm font-medium transition-colors hover:bg-subtle"
         >
           Decline
         </button>

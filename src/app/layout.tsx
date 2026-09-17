@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { ChatWidget } from "@/components/chat-widget";
 import { SITE } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Brand typefaces, matching illuvex.com: Manrope for headings, Inter for
+// body text. Geist Mono stays for reference numbers (order/quote/invoice
+// IDs) — unrelated to the brand refresh, no reason to touch it.
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
@@ -24,12 +32,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
         <Navbar />
         <main className="flex-1">{children}</main>
-        <footer className="site-footer border-t border-line bg-surface">
+        <footer className="site-footer border-t border-line bg-subtle">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-6 text-xs text-muted">
             <span>
               &copy; {new Date().getFullYear()} {SITE.name}

@@ -293,7 +293,7 @@ export function RequestModal({
               <button
                 type="submit"
                 disabled={pending}
-                className="shrink-0 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
+                className="btn-gradient shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-55"
               >
                 {pending ? "Sending..." : "Send request"}
               </button>

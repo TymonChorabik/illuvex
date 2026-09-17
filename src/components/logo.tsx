@@ -11,7 +11,7 @@ import { SITE } from "@/lib/site";
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-ink text-white ${className}`}
+      className={`btn-gradient grid h-8 w-8 shrink-0 place-items-center rounded-lg text-white ${className}`}
       aria-hidden="true"
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4">
@@ -36,7 +36,9 @@ export function Wordmark() {
   return (
     <span className="flex items-center gap-2.5">
       <Logo />
-      <span className="text-[17px] font-semibold tracking-tight">
+      {/* White: Wordmark is only ever used in the navy navbar today. Move it
+          somewhere light and this needs a color prop instead. */}
+      <span className="text-[17px] font-semibold tracking-tight text-white">
         {SITE.name}
       </span>
     </span>

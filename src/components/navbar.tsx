@@ -6,7 +6,7 @@ import { Wordmark } from "@/components/logo";
 import { OPEN_CHAT_EVENT } from "@/components/chat-widget";
 
 const LINKS = [
-  { href: "/", label: "Packages" },
+  { href: "/", label: "Get a quote" },
   { href: "/transactions", label: "Transactions" },
 ];
 
@@ -14,7 +14,7 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="site-header sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur">
+    <header className="site-header sticky top-0 z-30 bg-ink">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-5">
         <Link href="/" aria-label="Home">
           <Wordmark />
@@ -30,8 +30,8 @@ export function Navbar() {
                 aria-current={active ? "page" : undefined}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? "bg-subtle text-ink"
-                    : "text-muted hover:bg-subtle hover:text-ink"
+                    ? "bg-white/10 text-white"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -45,7 +45,7 @@ export function Navbar() {
             onClick={() =>
               window.dispatchEvent(new CustomEvent(OPEN_CHAT_EVENT))
             }
-            className="ml-2 hidden rounded-lg bg-ink px-3.5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85 sm:block"
+            className="btn-gradient ml-2 hidden rounded-full px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 sm:block"
           >
             Talk to us
           </button>

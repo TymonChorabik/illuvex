@@ -56,7 +56,7 @@ export default function Page() {
             <button
               type="button"
               onClick={() => setRequesting(true)}
-              className="mt-5 rounded-lg bg-ink px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
+              className="btn-gradient mt-5 rounded-full px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
               Get a custom quote
             </button>
