@@ -367,6 +367,33 @@ export async function listInvoices(
   });
 }
 
+/**
+ * Invoices for the public Transactions lookup, by client email.
+ *
+ * Same number-not-null rule as the portal: a draft has no number and a
+ * client has never seen it, so it must not appear here either.
+ */
+export async function listInvoicesByClientEmail(tenantId: string, email: string) {
+  return prisma.invoice.findMany({
+    where: {
+      tenantId,
+      number: { not: null },
+      client: { email: email.trim().toLowerCase() },
+    },
+    orderBy: [{ issuedAt: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      number: true,
+      status: true,
+      currency: true,
+      totalCents: true,
+      paidCents: true,
+      issuedAt: true,
+      dueAt: true,
+    },
+  });
+}
+
 export async function getInvoice(
   tenantId: string,
   id: string,

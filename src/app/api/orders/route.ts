@@ -3,6 +3,9 @@ import { createOrder, listOrdersByEmail, markEmailSent } from "@/lib/db";
 import { sendOrderEmails } from "@/lib/email";
 import { getOffer } from "@/lib/offers";
 import { clientKey, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { getTenantId } from "@/lib/tenant";
+import { listQuotesByClientEmail } from "@/lib/quotes";
+import { listInvoicesByClientEmail } from "@/lib/invoices";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -105,6 +108,15 @@ export async function GET(request: Request) {
     );
   }
 
-  const orders = await listOrdersByEmail(email);
-  return NextResponse.json({ orders });
+  const tenantId = await getTenantId();
+  // A client's activity isn't only orders any more -- an admin-raised quote
+  // or issued invoice never creates an Order row, so a lookup that only
+  // checked orders quietly showed nothing for a client who genuinely has
+  // history with us.
+  const [orders, quotes, invoices] = await Promise.all([
+    listOrdersByEmail(email),
+    listQuotesByClientEmail(tenantId, email),
+    listInvoicesByClientEmail(tenantId, email),
+  ]);
+  return NextResponse.json({ orders, quotes, invoices });
 }

@@ -3,11 +3,72 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Order } from "@/lib/db";
 import { STATUS_LABELS, STATUS_STYLES } from "@/lib/order-status";
+import { formatMoney } from "@/lib/money";
 import { formatPrice, SITE, STORAGE_KEY } from "@/lib/site";
+
+type QuoteRow = {
+  id: string;
+  reference: string;
+  title: string;
+  status: "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+  currency: string;
+  totalCents: number;
+  createdAt: string;
+};
+
+type InvoiceRow = {
+  id: string;
+  number: string;
+  status: "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
+  currency: string;
+  totalCents: number;
+  paidCents: number;
+  issuedAt: string | null;
+  dueAt: string | null;
+};
+
+const QUOTE_LABELS: Record<QuoteRow["status"], string> = {
+  SENT: "Awaiting your decision",
+  ACCEPTED: "Accepted",
+  REJECTED: "Declined",
+  EXPIRED: "Expired",
+};
+
+const QUOTE_STYLES: Record<QuoteRow["status"], string> = {
+  SENT: "bg-accent-soft text-accent",
+  ACCEPTED: "bg-ink text-white",
+  REJECTED: "bg-subtle text-muted",
+  EXPIRED: "bg-subtle text-muted",
+};
+
+const INVOICE_LABELS: Record<InvoiceRow["status"], string> = {
+  SENT: "Awaiting payment",
+  PAID: "Paid",
+  OVERDUE: "Overdue",
+  CANCELLED: "Cancelled",
+};
+
+const INVOICE_STYLES: Record<InvoiceRow["status"], string> = {
+  SENT: "bg-accent-soft text-accent",
+  PAID: "bg-ink text-white",
+  OVERDUE: "bg-accent text-white",
+  CANCELLED: "bg-subtle text-muted",
+};
+
+function dateLabel(value: string | null) {
+  if (!value) return null;
+  return new Date(value).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export default function TransactionsPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
+  const [quotes, setQuotes] = useState<QuoteRow[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +89,8 @@ export default function TransactionsPage() {
         return;
       }
       setOrders(data.orders as Order[]);
+      setQuotes((data.quotes as QuoteRow[]) ?? []);
+      setInvoices((data.invoices as InvoiceRow[]) ?? []);
       try {
         localStorage.setItem(STORAGE_KEY, trimmed);
       } catch {
@@ -61,8 +124,8 @@ export default function TransactionsPage() {
     <div className="mx-auto max-w-3xl px-5 py-12">
       <h1 className="text-3xl font-semibold tracking-tight">Your transactions</h1>
       <p className="mt-2 text-[15px] leading-relaxed text-muted">
-        Every package request you have sent us, and where each one stands. Look
-        them up with the email address you ordered with.
+        Every request, quote and invoice tied to your email, and where each
+        one stands. Look them up with the address you used with us.
       </p>
 
       <form
@@ -97,17 +160,19 @@ export default function TransactionsPage() {
       )}
 
       {orders !== null && !error && (
-        <div className="mt-8">
-          {orders.length === 0 ? (
+        <div className="mt-8 space-y-10">
+          {orders.length === 0 && quotes.length === 0 && invoices.length === 0 ? (
             <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-14 text-center">
-              <p className="font-medium">No requests under that address.</p>
+              <p className="font-medium">Nothing under that address.</p>
               <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted">
-                Check the spelling, or pick a package on the home page to send
-                your first one.
+                Check the spelling, or ask for a quote on the home page to
+                start your first one.
               </p>
             </div>
           ) : (
             <>
+          {orders.length > 0 && (
+            <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
                 {orders.length} request{orders.length === 1 ? "" : "s"}
               </p>
@@ -163,6 +228,97 @@ export default function TransactionsPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {quotes.length > 0 && (
+            <div>
+              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
+                {quotes.length} quote{quotes.length === 1 ? "" : "s"}
+              </p>
+              <ul className="space-y-3">
+                {quotes.map((quote) => (
+                  <li
+                    key={quote.id}
+                    className="rounded-xl border border-line bg-surface p-5"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <h2 className="font-semibold tracking-tight">
+                          {quote.title}
+                        </h2>
+                        <p className="mt-0.5 font-mono text-xs text-muted">
+                          {quote.reference}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">
+                          {formatMoney(quote.totalCents, quote.currency)}
+                        </p>
+                        <span
+                          className={`mt-1 inline-block rounded-md px-2 py-0.5 text-[11px] font-medium ${QUOTE_STYLES[quote.status]}`}
+                        >
+                          {QUOTE_LABELS[quote.status]}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4 border-t border-line pt-3 text-xs text-muted">
+                      <span>Sent {dateLabel(quote.createdAt)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {invoices.length > 0 && (
+            <div>
+              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
+                {invoices.length} invoice{invoices.length === 1 ? "" : "s"}
+              </p>
+              <ul className="space-y-3">
+                {invoices.map((invoice) => (
+                  <li
+                    key={invoice.id}
+                    className="rounded-xl border border-line bg-surface p-5"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <h2 className="font-mono font-semibold tracking-tight">
+                          {invoice.number}
+                        </h2>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">
+                          {formatMoney(invoice.totalCents, invoice.currency)}
+                        </p>
+                        <span
+                          className={`mt-1 inline-block rounded-md px-2 py-0.5 text-[11px] font-medium ${INVOICE_STYLES[invoice.status]}`}
+                        >
+                          {INVOICE_LABELS[invoice.status]}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
+                      {invoice.issuedAt && (
+                        <span>Issued {dateLabel(invoice.issuedAt)}</span>
+                      )}
+                      {invoice.dueAt && <span>Due {dateLabel(invoice.dueAt)}</span>}
+                      {invoice.status !== "PAID" && invoice.paidCents > 0 && (
+                        <span>
+                          {formatMoney(
+                            invoice.totalCents - invoice.paidCents,
+                            invoice.currency,
+                          )}{" "}
+                          outstanding
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
             </>
           )}
         </div>

@@ -361,6 +361,13 @@ export async function listQuotes(tenantId: string, status?: QuoteStatus) {
     include: {
       client: { select: { name: true, email: true } },
       _count: { select: { lines: true } },
+      // So the list can link straight to an existing invoice instead of
+      // only remembering one just created in this browser session.
+      invoices: {
+        where: { status: { not: "CANCELLED" } },
+        select: { id: true },
+        take: 1,
+      },
     },
   });
 }
@@ -369,6 +376,34 @@ export async function getQuote(tenantId: string, id: string) {
   return prisma.quote.findFirst({
     where: { id, tenantId },
     include: { lines: { orderBy: { sortOrder: "asc" } }, client: true },
+  });
+}
+
+/**
+ * Quotes for the public Transactions lookup, by client email.
+ *
+ * Read-only summaries only — no accessTokenHash, no line items. The
+ * emailed link is the only way to actually open or act on a quote; this
+ * must not become a second way to reach one by guessing an address.
+ * DRAFTs are excluded too: a client has never seen those.
+ */
+export async function listQuotesByClientEmail(tenantId: string, email: string) {
+  return prisma.quote.findMany({
+    where: {
+      tenantId,
+      status: { not: "DRAFT" },
+      client: { email: email.trim().toLowerCase() },
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      reference: true,
+      title: true,
+      status: true,
+      currency: true,
+      totalCents: true,
+      createdAt: true,
+    },
   });
 }
 

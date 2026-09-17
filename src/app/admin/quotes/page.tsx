@@ -17,6 +17,7 @@ type QuoteRow = {
   createdAt: string;
   client: { name: string; email: string };
   _count: { lines: number };
+  invoices: { id: string }[];
 };
 
 const STATUS_LABELS: Record<QuoteRow["status"], string> = {
@@ -48,7 +49,11 @@ export default function QuotesPage() {
   const [lastLink, setLastLink] = useState<{ id: string; link: string } | null>(
     null,
   );
-  const [invoicedIds, setInvoicedIds] = useState<Set<string>>(new Set());
+  // quoteId -> invoiceId, so "View invoice" can link straight to the
+  // document instead of just the list.
+  const [invoiceIdByQuote, setInvoiceIdByQuote] = useState<
+    Record<string, string>
+  >({});
 
   const load = useCallback(async (status: (typeof FILTERS)[number]) => {
     setLoading(true);
@@ -68,7 +73,17 @@ export default function QuotesPage() {
         setQuotes(null);
         return;
       }
-      setQuotes(data.quotes as QuoteRow[]);
+      const rows = data.quotes as QuoteRow[];
+      setQuotes(rows);
+      // Server truth for which quotes already have an invoice -- merged
+      // rather than replaced, so a filtered view doesn't forget rows it
+      // isn't currently showing.
+      const known = rows
+        .filter((q) => q.invoices.length > 0)
+        .map((q) => [q.id, q.invoices[0]!.id] as const);
+      if (known.length > 0) {
+        setInvoiceIdByQuote((prev) => ({ ...prev, ...Object.fromEntries(known) }));
+      }
     } catch {
       setError("Couldn't reach the server.");
     } finally {
@@ -123,7 +138,7 @@ export default function QuotesPage() {
         setError(data.error ?? "Could not create the invoice.");
         return;
       }
-      setInvoicedIds((prev) => new Set(prev).add(id));
+      setInvoiceIdByQuote((prev) => ({ ...prev, [id]: data.invoice.id }));
     } catch {
       setError("Couldn't reach the server.");
     } finally {
@@ -231,9 +246,9 @@ export default function QuotesPage() {
                     </button>
                   )}
                   {quote.status === "ACCEPTED" &&
-                    (invoicedIds.has(quote.id) ? (
+                    (invoiceIdByQuote[quote.id] ? (
                       <Link
-                        href="/admin/invoices"
+                        href={`/admin/invoices/${invoiceIdByQuote[quote.id]}`}
                         className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-subtle"
                       >
                         View invoice
