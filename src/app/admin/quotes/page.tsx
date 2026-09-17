@@ -111,12 +111,15 @@ export default function QuotesPage() {
       }
       // Surfaced so staff can copy the link while email is unconfigured.
       setLastLink({ id, link: data.link });
+      // load() clears the error at its own start, so it must run before the
+      // message below, not after -- otherwise the reload wipes it instantly
+      // and this warning is never actually seen.
+      await load(filter);
       if (!data.emailSent) {
         setError(
           `Quote marked as sent, but the email did not go out (${data.emailError}). Copy the link below and send it yourself.`,
         );
       }
-      await load(filter);
     } catch {
       setError("Couldn't reach the server.");
     } finally {

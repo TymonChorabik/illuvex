@@ -63,12 +63,15 @@ export default function ClientsPage() {
         return;
       }
       setLastInvite({ id, link: data.link });
+      // load() clears the error at its own start, so it must run before the
+      // message below, not after -- otherwise the reload wipes it instantly
+      // and this warning is never actually seen.
+      await load();
       if (!data.emailSent) {
         setError(
           `Invite created, but the email did not go out (${data.emailError}). Copy the link below and send it yourself.`,
         );
       }
-      await load();
     } catch {
       setError("Couldn't reach the server.");
     } finally {
