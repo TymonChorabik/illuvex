@@ -7,7 +7,14 @@ Transactions page lets people look up everything they have requested.
 
 ## Running it
 
-Two processes: the database and the app.
+**On a Mac, the easy way:** double-click **`Start Illudesk.command`** in the
+project folder. First run installs dependencies, sets up the local database,
+and creates an admin account (the login is printed in that window — save it).
+Every run after that just starts things up and opens your browser. Leave the
+window open while you work; closing it stops the server and database.
+
+**The manual way**, or on Linux/Windows — two processes: the database and the
+app.
 
 ```bash
 npm --prefix illuvex run db:start
@@ -62,6 +69,11 @@ managed Postgres; nothing else changes.
 
 Everything runs on macOS and Linux as well as Windows — the local database is
 WebAssembly, so there is nothing platform-specific to install.
+
+On a Mac: `git clone`, then double-click `Start Illudesk.command` — it does
+everything below on its own (install, env setup, migrate, seed) and tells you
+the admin login. The steps that follow are what it's running under the hood,
+useful if you're on Linux/Windows or want to understand what it does.
 
 ```bash
 git clone <this repo> && cd illuvex
